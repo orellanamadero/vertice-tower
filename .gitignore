@@ -47,3 +47,4 @@ media/
 
 # Archivos estáticos generados por Django
 staticfiles/
+.vscode/

@@ -185,11 +185,18 @@ class Unidad(models.Model):
 
     ESTADOS=[
         (1, "Disponible"),
-        (2, "Vendido "),
+        (2, "Vendido"),
     ]
     MONEDAS=[
         (1, "$US"),
         (2, "BOB")
+    ]
+    TIPO_VENTA_CHOICES = [
+        (1, "Pago total al contado"),
+        (2, "Anticipo / Reserva"),
+        (3, "Pagos parciales / Escalonados"),
+        (4, "Venta a plazos / Con reserva de propiedad"),
+        (5, "Crédito hipotecario (Bancario)"),
     ]
 
     piso = models.ForeignKey(
@@ -219,7 +226,16 @@ class Unidad(models.Model):
     moneda = models.PositiveSmallIntegerField(
         choices=MONEDAS
     )
-    
+    tipoVenta = models.PositiveSmallIntegerField(
+        choices=TIPO_VENTA_CHOICES,
+        null=True,
+        blank=True,
+    )
+    documentoVenta = models.FileField(
+        upload_to="proyectos/ventas/",
+        null=True,
+        blank=True,
+    ) 
     class Meta:
         permissions = [
             ("cambiar_estado_unidad", "Puede cambiar estado de unidad"),
@@ -230,7 +246,6 @@ class Unidad(models.Model):
         return f"{self.tipoUnidad.codigo} - {self.piso.nombrePiso}"
 
 class HistorialEstadoUnidad(models.Model):
-
     unidad = models.ForeignKey(
         Unidad,
         on_delete=models.CASCADE,
@@ -245,6 +260,14 @@ class HistorialEstadoUnidad(models.Model):
         choices=Unidad.ESTADOS
     )
 
+    venta = models.ForeignKey(
+        "HistorialVentaUnidad",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cambio_estado"
+    )
+
     usuario = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -254,13 +277,6 @@ class HistorialEstadoUnidad(models.Model):
     fecha = models.DateTimeField(
         auto_now_add=True
     )
-
-    def __str__(self):
-        return (
-            f"{self.unidad} - "
-            f"{self.get_estado_anterior_display()} → "
-            f"{self.get_estado_nuevo_display()}"
-        )
 
 class HistorialPrecioUnidad(models.Model):
 
@@ -298,3 +314,32 @@ class HistorialPrecioUnidad(models.Model):
             f"{self.precio_anterior} → "
             f"{self.precio_nuevo}"
         )
+
+class HistorialVentaUnidad(models.Model):
+
+    unidad = models.ForeignKey(
+        Unidad,
+        on_delete=models.CASCADE,
+        related_name="historial_ventas"
+    )
+
+    tipoVenta = models.PositiveSmallIntegerField(
+        choices=Unidad.TIPO_VENTA_CHOICES
+    )
+
+    documentoVenta = models.FileField(
+        upload_to="proyectos/historial_ventas/"
+    )
+
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True
+    )
+
+    fecha = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"Venta histórica - Unidad {self.unidad.id}"

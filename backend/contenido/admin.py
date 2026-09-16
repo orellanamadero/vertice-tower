@@ -19,7 +19,8 @@ class HeroStageAdmin(admin.ModelAdmin):
         "proyecto",
         "orden",
         "title",
-        "desktop",
+        "video",
+        "poster",
     )
     list_filter = ("proyecto",)
     search_fields = (

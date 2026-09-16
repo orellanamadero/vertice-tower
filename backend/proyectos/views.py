@@ -1,5 +1,4 @@
 from io import BytesIO
-
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
@@ -14,6 +13,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.lib.colors import HexColor
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from rest_framework.permissions import BasePermission
 
 from .models import Proyecto
 from .serializers import (
@@ -32,10 +32,10 @@ from contenido.serializers import (
     ContactoSerializer,
 )
 from recorrido.serializers import (
-    UnidadSerializer, UnidadEstadoSerializer, HistorialEstadoUnidadSerializer, UnidadPrecioSerializer, HistorialPrecioUnidadSerializer
+    UnidadSerializer, UnidadEstadoSerializer, HistorialEstadoUnidadSerializer, UnidadPrecioSerializer, HistorialPrecioUnidadSerializer, UnidadEdicionSerializer,HistorialVentaUnidad,
 )
 from recorrido.models import (
-    Unidad, HistorialEstadoUnidad, HistorialPrecioUnidad
+    Unidad, HistorialEstadoUnidad, HistorialPrecioUnidad,
 )
 
 
@@ -118,7 +118,8 @@ class HistorialEstadoUnidadListView(APIView):
         historial_estados = HistorialEstadoUnidad.objects.select_related(
             "unidad__tipoUnidad",
             "unidad__piso",
-            "usuario"
+            "usuario",
+            "venta"
         )
 
         historial_precios = HistorialPrecioUnidad.objects.select_related(
@@ -140,12 +141,14 @@ class HistorialEstadoUnidadListView(APIView):
         historial = []
 
         for registro in estados:
+
             historial.append({
                 **registro,
                 "tipo": "estado",
             })
 
         for registro in precios:
+
             historial.append({
                 **registro,
                 "tipo": "precio",
@@ -319,3 +322,35 @@ class UnidadFichaTecnicaView(APIView):
         )
 
         return response
+    
+class PuedeEditarUnidad(BasePermission):
+
+    def has_permission(self, request, view):
+
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        return (
+            request.user.groups.filter(
+                name__in=["ADMINISTRADOR", "ASESOR"]
+            ).exists()
+        )
+
+class UnidadEdicionUpdateView(generics.UpdateAPIView):
+    queryset = Unidad.objects.all()
+    serializer_class = UnidadEdicionSerializer
+    permission_classes = [
+        IsAuthenticated,
+        PuedeEditarUnidad
+    ]
+
+class TipoVentaOpcionesView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response([
+            {
+                "id": valor,
+                "nombre": nombre
+            }
+            for valor, nombre in Unidad.TIPO_VENTA_CHOICES
+        ])

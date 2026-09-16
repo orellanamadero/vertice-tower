@@ -1,25 +1,8 @@
 import { FaWhatsapp } from "react-icons/fa";
 import { FiFacebook } from "react-icons/fi";
-import { useEffect, useState } from "react";
-import { getProyectoBase } from "../../../services/api";
 
-function Footer(){
-    const [project, setProject] = useState(null);
-
-    useEffect(() => {
-        async function cargarProyecto() {
-            try {
-                const data = await getProyectoBase();
-                setProject(data);
-            } catch (error) {
-                console.error(
-                    "Error al cargar información del proyecto:",
-                    error
-                );
-            }
-        }
-        cargarProyecto();
-    }, []);
+function Footer({ project }) {
+    const empresa = project?.empresa;
 
     return (
         <footer
@@ -27,8 +10,8 @@ function Footer(){
                 absolute
                 bottom-0
                 left-0
-                w-full
                 z-50
+                w-full
                 bg-gradient-to-t
                 from-black/55
                 via-black/20
@@ -42,7 +25,7 @@ function Footer(){
                     items-center
                     justify-center
                     gap-x-2
-                    gap-y-1
+                    gap-y-0.5
                     p-3
                     lg:px-5
                 "
@@ -60,7 +43,7 @@ function Footer(){
                 </p>
 
                 <div className="flex items-center gap-1">
-                        <p
+                    <p
                         className="
                             text-center
                             text-[10px]
@@ -70,36 +53,44 @@ function Footer(){
                     >
                         Plataforma desarrollada por nuestro equipo.
                     </p>
-                    <a
-                        href={project?.empresa?.whatsapp}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="
-                            text-white
-                            transition
-                            hover:scale-110
-                            hover:text-[var(--color-naranja)]
-                        "
-                    >
-                        <FaWhatsapp className="size-3 md:size-4" />
-                    </a>
 
-                    <a
-                        href={project?.empresa?.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="
-                            text-white
-                            transition
-                            hover:scale-110
-                            hover:text-[var(--color-naranja)]
-                        "
-                    >
-                        <FiFacebook className="size-3 md:size-4" />
-                    </a>
+                    {empresa?.whatsapp && (
+                        <a
+                            href={empresa.whatsapp}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="WhatsApp"
+                            className="
+                                text-white
+                                transition
+                                hover:scale-110
+                                hover:text-[var(--color-naranja)]
+                            "
+                        >
+                            <FaWhatsapp className="size-3 md:size-4" />
+                        </a>
+                    )}
+
+                    {empresa?.facebook && (
+                        <a
+                            href={empresa.facebook}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Facebook"
+                            className="
+                                text-white
+                                transition
+                                hover:scale-110
+                                hover:text-[var(--color-naranja)]
+                            "
+                        >
+                            <FiFacebook className="size-3 md:size-4" />
+                        </a>
+                    )}
                 </div>
             </div>
         </footer>
-    )
+    );
 }
+
 export default Footer;

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState} from "react";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import Recorrido360 from "../Recorrido/Recorrido360";
 
@@ -21,16 +21,6 @@ function UnidadViewer({ view, unit }) {
             });
         });
 
-    };
-    const technicalScrollRef = useRef(null);
-
-    const centerTechnicalPlan = () => {
-        const container = technicalScrollRef.current;
-
-        if (!container) return;
-
-        container.scrollLeft =
-            (container.scrollWidth - container.clientWidth) / 2;
     };
 
     return (
@@ -57,13 +47,15 @@ function UnidadViewer({ view, unit }) {
                         overflow-hidden
                     "
                 >
-
                     <img
                         src={unit.tipoUnidad.render3D}
                         alt={`Render ${unit.tipoUnidad.codigo}`}
                         className="
-                            w-auto
+                            block
+                            max-h-full
+                            max-w-full
                             h-auto
+                            w-auto
                             object-contain
                         "
                     />
@@ -80,36 +72,28 @@ function UnidadViewer({ view, unit }) {
             {view === "technical" && (
 
                 <div
-                    ref={technicalScrollRef}
                     className="
-                        h-full
                         w-full
-                        overflow-x-auto
-                        overflow-y-hidden
+                        h-full
+                        flex
+                        items-center
+                        justify-center
+                        overflow-hidden
                         bg-[#ffffff]
                     "
                 >
-                    <div
+                    <img
+                        src={unit.tipoUnidad.planoTecnico}
+                        alt={`Plano técnico ${unit.tipoUnidad.codigo}`}
                         className="
-                            flex
-                            h-full
-                            w-max
-                            min-w-full
-                            items-center
+                            block
+                            max-h-full
+                            max-w-full
+                            h-auto
+                            w-auto
+                            object-contain
                         "
-                    >
-                        <img
-                            src={unit.tipoUnidad.planoTecnico}
-                            alt={`Plano técnico ${unit.tipoUnidad.codigo}`}
-                            className="
-                                h-full
-                                w-full
-                                max-w-none
-                                shrink-0
-                                object-contain
-                            "
-                        />
-                    </div>
+                    />
                 </div>
             )}
 

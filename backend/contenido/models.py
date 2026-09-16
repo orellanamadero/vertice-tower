@@ -9,11 +9,16 @@ class HeroStage(models.Model):
         on_delete=models.CASCADE,
         related_name="hero_stages"
     )
-    desktop = models.FileField(
-        upload_to="proyecto/hero/"
+    video = models.FileField(
+        upload_to="proyecto/hero/videos/"
+    )
+    poster = models.ImageField(
+        upload_to="proyecto/hero/posters/",
+        blank=True,
+        null=True
     )
     imagenHero = models.ImageField(
-        upload_to="proyecto/hero/",
+        upload_to="proyecto/hero/images/",
         blank=True,
         null=True
     )
@@ -31,10 +36,8 @@ class HeroStage(models.Model):
     orden = models.PositiveIntegerField(
         default=0
     )
-
     class Meta:
         ordering = ["orden"]
-
     def __str__(self):
         return f"{self.proyecto.nombreProyecto} - Stage {self.orden}"
 
@@ -51,6 +54,11 @@ class Ubicacion(models.Model):
         max_length=255
     )
     imageUbicacion = models.ImageField(
+        upload_to="proyecto/ubicacion/",
+        blank=True,
+        null=True
+    )
+    imageUbicacionMobile = models.ImageField(
         upload_to="proyecto/ubicacion/",
         blank=True,
         null=True

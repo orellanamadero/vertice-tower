@@ -1,4 +1,7 @@
 from rest_framework import serializers
+from django.db import transaction
+from pathlib import Path
+from django.core.files.base import ContentFile
 
 from .models import (
     Piso,
@@ -8,6 +11,7 @@ from .models import (
     HistorialEstadoUnidad,
     HistorialPrecioUnidad,
     CategoriaUnidad,
+    HistorialVentaUnidad
 )
 
 class CategoriaUnidadSerializer(serializers.ModelSerializer):
@@ -20,10 +24,6 @@ class CategoriaUnidadSerializer(serializers.ModelSerializer):
             "nombre",
         ] 
 
-# ============================================================
-# IMÁGENES DEL TIPO DE UNIDAD
-# ============================================================
-
 class ImageTipoUnidadSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -33,11 +33,6 @@ class ImageTipoUnidadSerializer(serializers.ModelSerializer):
             "id",
             "image",
         ]
-
-
-# ============================================================
-# TIPO DE UNIDAD
-# ============================================================
 
 class TipoUnidadSerializer(serializers.ModelSerializer):
 
@@ -80,27 +75,30 @@ class TipoUnidadSerializer(serializers.ModelSerializer):
             "fichaTecnica"
         ]
 
-# ============================================================
-# UNIDAD
-# ============================================================
-
 class UnidadSerializer(serializers.ModelSerializer):
 
     tipoUnidad = TipoUnidadSerializer(
         read_only=True
     )
+
     tipoMoneda = serializers.CharField(
         source="get_moneda_display",
         read_only=True
     )
+
     numeroPiso = serializers.IntegerField(
         source="piso.numero",
         read_only=True
     )
+
     estadoNombre = serializers.CharField(
         source="get_estado_display",
         read_only=True
     )
+    tipoVentaNombre = serializers.CharField(
+        source="get_tipoVenta_display",
+        read_only=True
+    ) 
 
     class Meta:
         model = Unidad
@@ -113,8 +111,17 @@ class UnidadSerializer(serializers.ModelSerializer):
             "estado",
             "estadoNombre",
             "precio",
+
+            # Valor numérico para editar
+            "moneda",
+
+            # Texto para mostrar
             "tipoMoneda",
-            
+
+            # Datos de venta
+            "tipoVenta",
+            "documentoVenta",
+            "tipoVentaNombre",
         ]
         
 class UnidadEstadoSerializer(serializers.ModelSerializer):
@@ -165,10 +172,6 @@ class UnidadPrecioSerializer(serializers.ModelSerializer):
 
         return instance
 
-# ============================================================
-# PISO
-# ============================================================
-
 class PisoSerializer(serializers.ModelSerializer):
 
     unidades = UnidadSerializer(
@@ -188,6 +191,10 @@ class PisoSerializer(serializers.ModelSerializer):
         ]
 
 class HistorialEstadoUnidadSerializer(serializers.ModelSerializer):
+    unidad_id = serializers.IntegerField(
+        source="unidad.id",
+        read_only=True
+    )
 
     unidad_codigo = serializers.CharField(
         source="unidad.tipoUnidad.codigo",
@@ -219,19 +226,51 @@ class HistorialEstadoUnidadSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
-    class Meta:
-        model = HistorialEstadoUnidad
+    tipo_venta_nombre = serializers.CharField(
+        source="venta.get_tipoVenta_display",
+        read_only=True,
+        allow_null=True
+    )
 
-        fields = [
-            "id",
-            "unidad_codigo",
-            "numero_piso",
-            "nombre_piso",
-            "estado_anterior_nombre",
-            "estado_nuevo_nombre",
-            "usuario_nombre",
-            "fecha",
-        ]
+    documento_venta = serializers.SerializerMethodField(
+        source="venta.documentoVenta",
+        read_only=True,
+        allow_null=True
+    )
+
+    def get_documento_venta(self, obj):
+        if not obj.venta:
+            return None
+
+        if not obj.venta.documentoVenta:
+            return None
+
+        request = self.context.get("request")
+
+        if request:
+            return request.build_absolute_uri(
+                obj.venta.documentoVenta.url
+            )
+
+        return obj.venta.documentoVenta.url
+    
+    class Meta:
+            model = HistorialEstadoUnidad
+            fields = [
+                "id",
+                "unidad_id",
+                "unidad_codigo",
+                "numero_piso",
+                "nombre_piso",
+                "estado_anterior",
+                "estado_nuevo",
+                "estado_anterior_nombre",
+                "estado_nuevo_nombre",
+                "tipo_venta_nombre",
+                "documento_venta",
+                "usuario_nombre",
+                "fecha",
+            ]
 
 class HistorialPrecioUnidadSerializer(serializers.ModelSerializer):
 
@@ -268,3 +307,192 @@ class HistorialPrecioUnidadSerializer(serializers.ModelSerializer):
             "usuario_nombre",
             "fecha",
         ]
+
+class UnidadEdicionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unidad
+        fields = [
+            "precio",
+            "moneda",
+            "estado",
+            "tipoVenta",
+            "documentoVenta",
+        ]
+
+    def validate(self, attrs):
+
+        usuario = self.context["request"].user
+
+        # Solo ADMINISTRADOR puede modificar precio o moneda
+        if not usuario.groups.filter(
+            name="ADMINISTRADOR"
+        ).exists():
+
+            if "precio" in attrs or "moneda" in attrs:
+                raise serializers.ValidationError({
+                    "permiso":
+                    "Solo un administrador puede modificar el precio o la moneda."
+                })
+
+        estado_nuevo = attrs.get(
+            "estado",
+            self.instance.estado
+        )
+
+        if estado_nuevo == 2:
+
+            tipo_venta = attrs.get(
+                "tipoVenta",
+                self.instance.tipoVenta
+            )
+
+            documento = attrs.get(
+                "documentoVenta",
+                self.instance.documentoVenta
+            )
+
+            if not tipo_venta:
+                raise serializers.ValidationError({
+                    "tipoVenta":
+                    "Debe seleccionar el tipo de venta."
+                })
+
+            if not documento:
+                raise serializers.ValidationError({
+                    "documentoVenta":
+                    "Debe adjuntar el documento de respaldo."
+                })
+
+        return attrs
+
+    def validate_documentoVenta(self, value):
+
+        if value:
+
+            if value.content_type != "application/pdf":
+                raise serializers.ValidationError(
+                    "El documento debe estar en formato PDF."
+                )
+
+            if value.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError(
+                    "El documento no puede superar los 5 MB."
+                )
+
+        return value
+
+    def update(self, instance, validated_data):
+        estado_anterior = instance.estado
+        precio_anterior = instance.precio
+
+        estado_nuevo = validated_data.get(
+            "estado",
+            instance.estado
+        )
+
+        precio_nuevo = validated_data.get(
+            "precio",
+            instance.precio
+        )
+
+        usuario = self.context["request"].user
+
+        with transaction.atomic():
+
+            documento_anterior = instance.documentoVenta
+
+            instance = super().update(
+                instance,
+                validated_data
+            )
+
+            venta_historica = None
+
+            # ==========================================
+            # DISPONIBLE -> VENDIDO
+            # ==========================================
+
+            if (
+                estado_anterior != 2
+                and estado_nuevo == 2
+            ):
+
+                if instance.documentoVenta:
+
+                    archivo = instance.documentoVenta
+
+                    archivo.open("rb")
+
+                    contenido = archivo.read()
+
+                    nombre = Path(
+                        archivo.name
+                    ).name
+
+                    venta_historica = HistorialVentaUnidad.objects.create(
+                        unidad=instance,
+                        tipoVenta=instance.tipoVenta,
+                        usuario=usuario
+                    )
+
+                    venta_historica.documentoVenta.save(
+                        nombre,
+                        ContentFile(contenido),
+                        save=True
+                    )
+
+                    archivo.close()
+
+            # ==========================================
+            # HISTORIAL DE ESTADO
+            # ==========================================
+
+            if estado_anterior != estado_nuevo:
+
+                HistorialEstadoUnidad.objects.create(
+                    unidad=instance,
+                    estado_anterior=estado_anterior,
+                    estado_nuevo=estado_nuevo,
+                    venta=venta_historica,
+                    usuario=usuario
+                )
+
+            # ==========================================
+            # HISTORIAL DE PRECIO
+            # ==========================================
+
+            if precio_anterior != precio_nuevo:
+
+                HistorialPrecioUnidad.objects.create(
+                    unidad=instance,
+                    precio_anterior=precio_anterior,
+                    precio_nuevo=precio_nuevo,
+                    usuario=usuario
+                )
+
+            # ==========================================
+            # VENDIDO -> DISPONIBLE
+            # ==========================================
+
+            if (
+                estado_anterior == 2
+                and estado_nuevo == 1
+            ):
+
+                if documento_anterior:
+
+                    documento_anterior.delete(
+                        save=False
+                    )
+
+                instance.documentoVenta = None
+                instance.tipoVenta = None
+
+                instance.save(
+                    update_fields=[
+                        "documentoVenta",
+                        "tipoVenta"
+                    ]
+                )
+
+        return instance

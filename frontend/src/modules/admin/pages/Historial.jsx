@@ -6,6 +6,24 @@ function Historial() {
     const [loading, setLoading] = useState(true);
     const [sinPermiso, setSinPermiso] = useState(false);
 
+    const [filtroPiso, setFiltroPiso] = useState("todos");
+    const [filtroTipo, setFiltroTipo] = useState("todos");
+
+    const historialFiltrado = historial.filter((registro) => {
+        const coincidePiso =
+            filtroPiso === "todos" ||
+            String(registro.numero_piso) === filtroPiso;
+        const coincideTipo =
+            filtroTipo === "todos" ||
+            registro.tipo === filtroTipo;
+        return coincidePiso && coincideTipo;
+    });
+    const pisosDisponibles = [
+        ...new Set(
+            historial.map((registro) => registro.numero_piso)
+        ),
+    ].sort((a, b) => a - b);
+
     const cargarHistorial = async () => {
         try {
             const response = await apiFetch(
@@ -109,84 +127,202 @@ function Historial() {
                 p-6
             ">
                 <div className="
-                    overflow-hidden
+                    mb-6
+                    flex
+                    flex-col
+                    gap-4
                     rounded-2xl
                     bg-white
+                    p-5
                     shadow-sm
+                    md:flex-row
+                    md:items-end
                 ">
-                    <div className="overflow-x-auto">
 
-                        <table className="
-                            w-full
-                            min-w-[800px]
-                        ">
+                    {/* FILTRO PISO */}
 
-                            <thead className="
-                                bg-[var(--color-naranja)]/80
-                                text-stone-50
-                                text-center
+                    <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium text-gray-600">
+                            Piso
+                        </label>
+
+                        <div className="relative w-fit">
+                            <select
+                                value={filtroPiso}
+                                onChange={(e) => setFiltroPiso(e.target.value)}
+                                className="
+                                    appearance-none
+                                    rounded-xl
+                                    border
+                                    border-black/10
+                                    bg-white
+                                    py-2.5
+                                    pl-4
+                                    pr-10
+                                    text-sm
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--color-naranja)]
+                                "
+                            >
+                                <option value="todos">
+                                    Todos los pisos
+                                </option>
+
+                                {pisosDisponibles.map((piso) => (
+                                    <option
+                                        key={piso}
+                                        value={String(piso)}
+                                    >
+                                        Piso {piso}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <span className="
+                                pointer-events-none
+                                absolute
+                                right-3
+                                top-1/2
+                                -translate-y-1/2
+                                text-gray-500
                             ">
-                                <tr>
+                                ▼
+                            </span>
+                        </div>
+                    </div>
 
-                                    <th className="table-header">
-                                        Departamento
-                                    </th>
 
-                                    <th className="table-header">
+                    {/* FILTRO TIPO */}
+
+                    <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium text-gray-600">
+                            Tipo de cambio
+                        </label>
+                            <div className="relative w-fit">
+                            <select
+                                value={filtroTipo}
+                                onChange={(e) => setFiltroTipo(e.target.value)}
+                                className="
+                                    appearance-none
+                                    rounded-xl
+                                    border
+                                    border-black/10
+                                    bg-white
+                                    py-2.5
+                                    pl-4
+                                    pr-10
+                                    text-sm
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--color-naranja)]
+                                "
+                            >
+                                <option value="todos">
+                                    Todos
+                                </option>
+
+                                <option value="estado">
+                                    Estado
+                                </option>
+
+                                <option value="precio">
+                                    Precio
+                                </option>
+                            </select>
+                            <span className="
+                                pointer-events-none
+                                absolute
+                                right-3
+                                top-1/2
+                                -translate-y-1/2
+                                text-gray-500
+                            ">
+                                ▼
+                            </span>
+                        </div>
+                    </div>
+
+
+                    {/* LIMPIAR */}
+
+                    {(filtroPiso !== "todos" || filtroTipo !== "todos") && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setFiltroPiso("todos");
+                                setFiltroTipo("todos");
+                            }}
+                            className="
+                                rounded-xl
+                                border
+                                border-black/10
+                                px-4
+                                py-2.5
+                                text-sm
+                                font-medium
+                                text-gray-600
+                                transition
+                                hover:bg-zinc-50
+                            "
+                        >
+                            Limpiar filtros
+                        </button>
+                    )}
+
+                </div>
+                <div className="
+                    overflow-hidden
+                ">
+                    <div className="max-w-7xl mx-auto border border-slate-200 rounded-2xl overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="text-slate-900 text-sm font-semibold border-b border-slate-300 whitespace-nowrap">
+                                <tr class="bg-slate-50">
+                                    <th scope="col" className="table-header">
                                         Piso
                                     </th>
+                                    <th scope="col" className="table-header">
+                                        Unidad
+                                    </th>
 
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Tipo de cambio
                                     </th>
 
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Cambio
                                     </th>
 
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Usuario
                                     </th>
 
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Fecha
                                     </th>
 
                                 </tr>
                             </thead>
 
-                            <tbody className="
-                                divide-y
-                                divide-black/10
-                            ">
+                            <tbody class="text-sm divide-y divide-slate-200">
 
-                                {historial.map((registro) => (
-
+                                {historialFiltrado.map((registro) => (
                                     <tr
                                         key={`${registro.tipo}-${registro.id}`}
-                                        className="
-                                            text-center
-                                            transition
-                                            hover:bg-zinc-50
-                                        "
+                                        class="hover:bg-slate-50 text-center"
                                     >
-
-                                        {/* DEPARTAMENTO */}
-
-                                        <td className="table-body">
-                                            {registro.unidad_codigo}
-                                        </td>
-
                                         {/* PISO */}
-
                                         <td className="table-body">
                                             {registro.numero_piso}°
                                         </td>
 
-                                        {/* TIPO */}
-
+                                        {/* DEPARTAMENTO */}
                                         <td className="table-body">
+                                            {registro.unidad_codigo}
+                                        </td>
 
+                                        {/* TIPO */}
+                                        <td className="table-body">
                                             {registro.tipo === "estado" ? (
                                                 <span className="
                                                     rounded-full
@@ -223,50 +359,102 @@ function Historial() {
 
                                                 <div className="
                                                     flex
+                                                    flex-col
                                                     items-center
                                                     justify-center
                                                     gap-2
                                                 ">
 
-                                                    <span className="
-                                                        rounded-full
-                                                        bg-zinc-100
-                                                        px-3
-                                                        py-1
-                                                        text-xs
-                                                        font-medium
-                                                        text-gray-600
-                                                    ">
-                                                        {
-                                                            registro.estado_anterior_nombre
-                                                        }
-                                                    </span>
+                                                    {/* CAMBIO DE ESTADO */}
 
-                                                    <span className="
-                                                        text-gray-400
+                                                    <div className="
+                                                        flex
+                                                        items-center
+                                                        justify-center
+                                                        gap-2
                                                     ">
-                                                        →
-                                                    </span>
 
-                                                    <span
-                                                        className={`
+                                                        <span className="
                                                             rounded-full
+                                                            bg-zinc-100
                                                             px-3
                                                             py-1
                                                             text-xs
                                                             font-medium
-                                                            ${
-                                                                registro.estado_nuevo_nombre ===
-                                                                "Disponible"
-                                                                    ? "bg-green-100 text-green-700"
-                                                                    : "bg-red-100 text-red-700"
-                                                            }
-                                                        `}
-                                                    >
-                                                        {
-                                                            registro.estado_nuevo_nombre
-                                                        }
-                                                    </span>
+                                                            text-gray-600
+                                                        ">
+                                                            {registro.estado_anterior_nombre}
+                                                        </span>
+
+                                                        <span className="
+                                                            text-gray-400
+                                                        ">
+                                                            →
+                                                        </span>
+
+                                                        <span
+                                                            className={`
+                                                                rounded-full
+                                                                px-3
+                                                                py-1
+                                                                text-xs
+                                                                font-medium
+                                                                ${
+                                                                    registro.estado_nuevo_nombre ===
+                                                                    "Disponible"
+                                                                        ? "bg-green-100 text-green-700"
+                                                                        : "bg-red-100 text-red-700"
+                                                                }
+                                                            `}
+                                                        >
+                                                            {registro.estado_nuevo_nombre}
+                                                        </span>
+
+                                                    </div>
+                                                    {/* INFORMACIÓN DE VENTA */}
+
+                                                    {registro.estado_anterior_nombre === "Disponible" &&
+                                                        registro.estado_nuevo_nombre === "Vendido" &&
+                                                        registro.tipo_venta_nombre && (
+
+                                                            <div className="
+                                                                flex
+                                                                flex-col
+                                                                items-center
+                                                                gap-1
+                                                                text-xs
+                                                            ">
+
+                                                                <span className="
+                                                                    font-medium
+                                                                    text-gray-400
+                                                                ">
+                                                                    {registro.tipo_venta_nombre}
+                                                                </span>
+
+                                                                {registro.documento_venta && (
+                                                                    <a
+                                                                        href={
+                                                                            registro.documento_venta.startsWith("http")
+                                                                                ? registro.documento_venta
+                                                                                : `http://127.0.0.1:8000${registro.documento_venta}`
+                                                                        }
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="
+                                                                            font-medium
+                                                                            text-blue-600
+                                                                            hover:text-blue-800
+                                                                            hover:underline
+                                                                        "
+                                                                    >
+                                                                        Ver documento
+                                                                    </a>
+                                                                )}
+
+                                                            </div>
+
+                                                        )}
 
                                                 </div>
 

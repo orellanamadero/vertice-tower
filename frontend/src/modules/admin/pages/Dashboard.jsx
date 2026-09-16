@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../services/api";
 import { useOutletContext } from "react-router-dom";
 import { CiEdit } from "react-icons/ci";
-import { MdOutlineAttachMoney } from "react-icons/md";
 
 function Dashboard() {
     const { proyecto, usuario } = useOutletContext();
@@ -12,7 +11,37 @@ function Dashboard() {
     const [filtroPiso, setFiltroPiso] = useState("todos");
     const [unidadSeleccionada, setUnidadSeleccionada] = useState(null);
     const [modal, setModal] = useState(null);
-    const [nuevoPrecio, setNuevoPrecio] = useState("");
+    const [tiposVenta, setTiposVenta] = useState([]);
+    const cargarTiposVenta = async () => {
+        try {
+            const response = await apiFetch(
+                "/proyectos/unidades/tipos-venta/"
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "No se pudieron obtener los tipos de venta"
+                );
+            }
+
+            const data = await response.json();
+
+            setTiposVenta(data);
+
+        } catch (error) {
+            console.error(
+                "Error al cargar tipos de venta:",
+                error
+            );
+        }
+    };
+    const [formulario, setFormulario] = useState({
+        precio: "",
+        moneda: 1,
+        estado: 1,
+        tipoVenta: "",
+        documentoVenta: null,
+    });
 
     const cargarUnidades = async () => {
         try {
@@ -42,73 +71,118 @@ function Dashboard() {
 
     useEffect(() => {
         cargarUnidades();
+        cargarTiposVenta();
     }, []);
+    const esAdministrador = usuario?.groups?.includes("ADMINISTRADOR");
 
-    const cambiarEstado = async (unidad, nuevoEstado) => {
-        try {
-            const response = await apiFetch(
-                `/proyectos/unidades/${unidad.id}/estado/`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        estado: nuevoEstado,
-                    }),
-                }
-            );
-            if (!response.ok) {
-                throw new Error("No se pudo cambiar el estado");
-            }
-            await cargarUnidades();
-            setModal(null);
-            setUnidadSeleccionada(null);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const cambiarPrecio = async (unidad, nuevoPrecio) => {
-
-        const precioNumerico = Number(nuevoPrecio);
-
-        if (
-            !Number.isFinite(precioNumerico) ||
-            precioNumerico < 0
-        ) {
+    const editarUnidad = async () => {
+        if (!unidadSeleccionada) {
+            console.log("No hay unidad seleccionada");
             return;
         }
 
         try {
+            console.log("EDITANDO UNIDAD:", unidadSeleccionada.id);
+            console.log("FORMULARIO:", formulario);
+            console.log("ES ADMIN:", esAdministrador);
+
+            const formData = new FormData();
+
+            if (esAdministrador) {
+                const precioNumerico = Number(formulario.precio);
+
+                console.log("PRECIO NUMÉRICO:", precioNumerico);
+
+                if (
+                    !Number.isFinite(precioNumerico) ||
+                    precioNumerico < 0
+                ) {
+                    console.log("PRECIO INVÁLIDO");
+                    return;
+                }
+
+                formData.append(
+                    "precio",
+                    precioNumerico.toFixed(2)
+                );
+
+                formData.append(
+                    "moneda",
+                    formulario.moneda
+                );
+            }
+
+            formData.append(
+                "estado",
+                formulario.estado
+            );
+
+            if (formulario.tipoVenta) {
+                formData.append(
+                    "tipoVenta",
+                    formulario.tipoVenta
+                );
+            }
+
+            if (formulario.documentoVenta) {
+                formData.append(
+                    "documentoVenta",
+                    formulario.documentoVenta
+                );
+            }
+
+            console.log("ENVIANDO PETICIÓN...");
+
             const response = await apiFetch(
-                `/proyectos/unidades/${unidad.id}/precio/`,
+                `/proyectos/unidades/${unidadSeleccionada.id}/editar/`,
                 {
                     method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        precio: precioNumerico,
-                    }),
+                    body: formData,
                 }
             );
 
+            console.log("STATUS:", response.status);
+
             if (!response.ok) {
-                throw new Error("No se pudo cambiar el precio");
+                const errorData = await response.json();
+
+                console.error(
+                    "ERROR DEL BACKEND:",
+                    errorData
+                );
+
+                throw new Error(
+                    "No se pudo editar la unidad"
+                );
             }
+
+            const data = await response.json();
+
+            console.log(
+                "UNIDAD ACTUALIZADA:",
+                data
+            );
 
             await cargarUnidades();
 
             setModal(null);
             setUnidadSeleccionada(null);
-            setNuevoPrecio("");
+
+            setFormulario({
+                precio: "",
+                moneda: 1,
+                estado: 1,
+                tipoVenta: "",
+                documentoVenta: null,
+            });
 
         } catch (error) {
-            console.error(error);
+            console.error(
+                "ERROR AL EDITAR:",
+                error
+            );
         }
     };
-
     const pisos = useMemo(() => {
         return [...new Set(
             unidades.map((unidad) => unidad.numeroPiso)
@@ -253,131 +327,150 @@ function Dashboard() {
                     md:flex-row
                 ">
 
-                    <div className="flex-1">
-                        <label className="
-                            mb-2
-                            block
-                            text-xs
-                            uppercase
-                            tracking-widest
-                            text-gray-500
-                        ">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium text-gray-600">
                             Estado
                         </label>
+                        <div className="relative w-fit">
+                            <select
+                                value={filtroEstado}
+                                onChange={(event) =>
+                                    setFiltroEstado(event.target.value)
+                                }
+                                className="
+                                    appearance-none
+                                    rounded-xl
+                                    border
+                                    border-black/10
+                                    bg-white
+                                    py-2.5
+                                    pl-4
+                                    pr-10
+                                    text-sm
+                                    outline-none
+                                    transition
+                                    focus:border-[var(--color-naranja)]
+                                "
+                            >
+                                <option value="todos">
+                                    Todos
+                                </option>
 
-                        <select
-                            value={filtroEstado}
-                            onChange={(event) =>
-                                setFiltroEstado(event.target.value)
-                            }
-                            className="
-                                w-full
-                                rounded-lg
-                                border
-                                border-black/10
-                                bg-zinc-50
-                                px-4
-                                py-3
-                                text-sm
-                                outline-none
-                            "
-                        >
-                            <option value="todos">
-                                Todos
-                            </option>
+                                <option value="1">
+                                    Disponible
+                                </option>
 
-                            <option value="1">
-                                Disponible
-                            </option>
-
-                            <option value="2">
-                                Vendido
-                            </option>
-                        </select>
+                                <option value="2">
+                                    Vendido
+                                </option>
+                            </select>
+                                                        <span className="
+                                pointer-events-none
+                                absolute
+                                right-3
+                                top-1/2
+                                -translate-y-1/2
+                                text-gray-500
+                            ">
+                                ▼
+                            </span>
+                        </div>
                     </div>
 
 
-                    <div className="flex-1">
-                        <label className="
-                            mb-2
-                            block
-                            text-xs
-                            uppercase
-                            tracking-widest
-                            text-gray-500
-                        ">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-sm font-medium text-gray-600">
                             Piso
                         </label>
-
-                        <select
-                            value={filtroPiso}
-                            onChange={(event) =>
-                                setFiltroPiso(event.target.value)
-                            }
-                            className="
-                                w-full
-                                rounded-lg
-                                border
-                                border-black/10
-                                bg-zinc-50
-                                px-4
-                                py-3
-                                text-sm
-                                outline-none
-                            "
-                        >
-                            <option value="todos">
-                                Todos los pisos
-                            </option>
-
-                            {[...pisos]
-                            .sort((a, b) => a - b)
-                            .map((piso) => (
-                                <option
-                                    key={piso}
-                                    value={piso}
-                                >
-                                    {piso}
+                        <div className="relative w-fit">
+                            <select
+                                value={filtroPiso}
+                                onChange={(event) =>
+                                    setFiltroPiso(event.target.value)
+                                }
+                                className="
+                                appearance-none
+                                        rounded-xl
+                                        border
+                                        border-black/10
+                                        bg-white
+                                        py-2.5
+                                        pl-4
+                                        pr-10
+                                        text-sm
+                                        outline-none
+                                        transition
+                                        focus:border-[var(--color-naranja)]
+                                "
+                            >
+                                <option value="todos">
+                                    Todos los pisos
                                 </option>
-                            ))}
-                        </select>
+
+                                {[...pisos]
+                                .sort((a, b) => a - b)
+                                .map((piso) => (
+                                    <option
+                                        key={piso}
+                                        value={piso}
+                                    >
+                                        Piso {piso}
+                                    </option>
+                                ))}
+                            </select>
+                            <span className="
+                                pointer-events-none
+                                absolute
+                                right-3
+                                top-1/2
+                                -translate-y-1/2
+                                text-gray-500
+                            ">
+                                ▼
+                            </span>
+                        </div>
+                        <span className="
+                                pointer-events-none
+                                absolute
+                                right-3
+                                top-1/2
+                                -translate-y-1/2
+                                text-gray-500
+                            ">
+                                ▼
+                        </span>
                     </div>
 
                 </div>
 
                 <div className="
-                    mt-6
-                    overflow-hidden
-                    rounded-2xl
-                    bg-white
-                    shadow-sm
+                    overflow-hidden mt-10
                 ">
-
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[800px]">
-                            <thead className="bg-[var(--color-naranja)]/80 text-stone-50 text-center">
-                                <tr>
-                                    <th className="table-header">
+                    <div className="max-w-7xl mx-auto border border-slate-200 rounded-2xl overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="text-slate-900 text-sm font-semibold border-b border-slate-300 whitespace-nowrap">
+                                <tr class="bg-slate-50">
+                                    <th scope="col" className="table-header">
                                         Piso
                                     </th>
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Departamento
                                     </th>
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Tipo
                                     </th>
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Precio
                                     </th>
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Estado
                                     </th>
-                                    <th className="table-header">
+                                    <th scope="col" className="table-header">
                                         Acción
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-black/10">
+                            <tbody class="text-sm divide-y divide-slate-200">
                                 {[...unidadesFiltradas]
                                     .sort((a, b) => {
                                         if (a.numeroPiso !== b.numeroPiso) {
@@ -390,7 +483,7 @@ function Dashboard() {
                                     .map((unidad) => (
                                     <tr
                                         key={unidad.id}
-                                        className="transition hover:bg-zinc-50 text-center"
+                                        class="hover:bg-slate-50 text-center"
                                     >
                                         <td className="table-body">
                                             {unidad.numeroPiso}
@@ -442,54 +535,22 @@ function Dashboard() {
                                                 <button
                                                     onClick={() => {
                                                         setUnidadSeleccionada(unidad);
-                                                        setModal("estado");
+
+                                                        setFormulario({
+                                                            precio: unidad.precio ?? "",
+                                                            moneda: unidad.moneda ?? 1,
+                                                            estado: unidad.estado ?? 1,
+                                                            tipoVenta: unidad.tipoVenta ?? "",
+                                                            documentoVenta: null,
+                                                        });
+
+                                                        setModal("editar");
                                                     }}
-                                                    className="
-                                                        flex
-                                                        gap-1
-                                                        items-center
-                                                        rounded-full
-                                                        border
-                                                        bg-blue-500
-                                                        text-slate-100
-                                                        px-4
-                                                        py-2
-                                                        text-xs
-                                                        font-medium
-                                                        tracking-wide
-                                                        transition
-                                                        hover:bg-slate-900
-                                                    "
+                                                    className="flex items-center gap-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
                                                 >
-                                                    <CiEdit className="size-4"/> Editar estado
+                                                    <CiEdit size={20} />
+                                                    Editar unidad
                                                 </button>
-                                                {usuario?.groups?.includes("ADMINISTRADOR") && (
-                                                    <button
-                                                        onClick={() => {
-                                                            setUnidadSeleccionada(unidad);
-                                                            setNuevoPrecio(unidad.precio ?? "");
-                                                            setModal("precio");
-                                                        }}
-                                                        className="
-                                                            flex
-                                                            gap-1
-                                                            items-center
-                                                            rounded-full
-                                                            border
-                                                            bg-green-600
-                                                            text-slate-100
-                                                            px-4
-                                                            py-2
-                                                            text-xs
-                                                            font-medium
-                                                            tracking-wide
-                                                            transition
-                                                            hover:bg-slate-900
-                                                        "
-                                                    >
-                                                        <MdOutlineAttachMoney className="size-4"/> Editar precio
-                                                    </button>
-                                                )}
                                             </div>
 
                                         </td>
@@ -507,7 +568,7 @@ function Dashboard() {
                 </div>
 
             </div>
-            {modal && unidadSeleccionada && (
+            {modal === "editar" && unidadSeleccionada && (
                 <div className="
                     fixed
                     inset-0
@@ -522,188 +583,445 @@ function Dashboard() {
                     <div className="
                         w-full
                         max-w-md
+                        max-h-[90vh]
+                        overflow-y-auto
                         rounded-2xl
                         bg-white
                         p-6
                         shadow-2xl
                     ">
 
-                        {/* ESTADO */}
+                        {/* ENCABEZADO */}
 
-                        {modal === "estado" && (
-                            <>
-                                <h2 className="text-xl font-semibold">
-                                    Editar estado
-                                </h2>
+                        <h2 className="text-xl font-semibold">
+                            Editar unidad
+                        </h2>
 
-                                <p className="mt-1 text-sm text-gray-500">
-                                    {unidadSeleccionada.tipoUnidad.nombre}
-                                </p>
+                        <p className="mt-1 text-sm text-gray-500">
+                            {unidadSeleccionada.tipoUnidad.nombre}
+                            {" · "}
+                            Piso {unidadSeleccionada.numeroPiso}
+                        </p>
 
-                                <div className="
-                                    mt-6
-                                    grid
-                                    grid-cols-2
-                                    gap-3
-                                ">
-                                    <button
-                                        onClick={() =>
-                                            cambiarEstado(
-                                                unidadSeleccionada,
-                                                1
-                                            )
-                                        }
-                                        className="
-                                            rounded-xl
-                                            border
-                                            border-green-200
-                                            bg-green-50
-                                            px-4
-                                            py-4
-                                            text-sm
-                                            font-medium
-                                            text-green-700
-                                            transition
-                                            hover:bg-green-100
-                                        "
-                                    >
-                                        Disponible
-                                    </button>
-
-                                    <button
-                                        onClick={() =>
-                                            cambiarEstado(
-                                                unidadSeleccionada,
-                                                2
-                                            )
-                                        }
-                                        className="
-                                            rounded-xl
-                                            border
-                                            border-red-200
-                                            bg-red-50
-                                            px-4
-                                            py-4
-                                            text-sm
-                                            font-medium
-                                            text-red-700
-                                            transition
-                                            hover:bg-red-100
-                                        "
-                                    >
-                                        Vendido
-                                    </button>
-                                </div>
-                            </>
-                        )}
 
                         {/* PRECIO */}
 
-                        {modal === "precio" && (
-                            <>
-                                <h2 className="text-xl font-semibold">
-                                    Editar precio
-                                </h2>
+                        <div className="mt-6">
 
-                                <p className="mt-1 text-sm text-gray-500">
-                                    {unidadSeleccionada.tipoUnidad.nombre}
-                                </p>
+                            <label className="
+                                mb-2
+                                block
+                                text-xs
+                                uppercase
+                                tracking-widest
+                                text-gray-500
+                            ">
+                                Precio
+                            </label>
 
-                                <div className="mt-6">
+                            {usuario?.groups?.includes("ADMINISTRADOR") ? (
 
-                                    <label className="
-                                        mb-2
-                                        block
+                                <div className="
+                                    flex
+                                    items-center
+                                    rounded-xl
+                                    border
+                                    border-black/10
+                                    bg-zinc-50
+                                    px-4
+                                ">
+
+                                    <span className="text-sm text-gray-400">
+                                        {formulario.moneda === 1
+                                            ? "$US"
+                                            : "BOB"
+                                        }
+                                    </span>
+
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={formulario.precio}
+                                        onChange={(event) =>
+                                            setFormulario(prev => ({
+                                                ...prev,
+                                                precio: event.target.value
+                                            }))
+                                        }
+                                        className="
+                                            w-full
+                                            bg-transparent
+                                            px-3
+                                            py-3
+                                            outline-none
+                                        "
+                                    />
+
+                                </div>
+
+                            ) : (
+
+                                <div className="
+                                    rounded-xl
+                                    border
+                                    border-gray-200
+                                    bg-gray-100
+                                    px-4
+                                    py-3
+                                    text-gray-500
+                                ">
+                                    {Number(
+                                        formulario.precio || 0
+                                    ).toLocaleString("es-BO", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })}
+
+                                    {" "}
+
+                                    {formulario.moneda === 1
+                                        ? "$US"
+                                        : "BOB"
+                                    }
+
+                                    <span className="
+                                        ml-2
                                         text-xs
-                                        uppercase
-                                        tracking-widest
-                                        text-gray-500
+                                        text-gray-400
                                     ">
-                                        Nuevo precio
-                                    </label>
+                                        (Solo administrador)
+                                    </span>
+                                </div>
 
-                                    <div className="
-                                        flex
-                                        items-center
+                            )}
+
+                        </div>
+
+
+                        {/* MONEDA */}
+
+                        <div className="mt-4">
+
+                            <label className="
+                                mb-2
+                                block
+                                text-xs
+                                uppercase
+                                tracking-widest
+                                text-gray-500
+                            ">
+                                Moneda
+                            </label>
+
+                            {usuario?.groups?.includes("ADMINISTRADOR") ? (
+
+                                <select
+                                    value={formulario.moneda}
+                                    onChange={(event) =>
+                                        setFormulario(prev => ({
+                                            ...prev,
+                                            moneda: Number(event.target.value)
+                                        }))
+                                    }
+                                    className="
+                                        w-full
                                         rounded-xl
                                         border
                                         border-black/10
                                         bg-zinc-50
                                         px-4
-                                    ">
-                                        <span className="text-sm text-gray-400">
-                                            {unidadSeleccionada.tipoMoneda}
-                                        </span>
+                                        py-3
+                                        outline-none
+                                    "
+                                >
+                                    <option value={1}>
+                                        $US
+                                    </option>
 
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            value={nuevoPrecio}
-                                            onChange={(event) =>
-                                                setNuevoPrecio(event.target.value)
-                                            }
-                                            className="
-                                                w-full
-                                                bg-transparent
-                                                px-3
-                                                py-3
-                                                outline-none
-                                            "
-                                        />
-                                    </div>
+                                    <option value={2}>
+                                        BOB
+                                    </option>
+                                </select>
 
-                                </div>
+                            ) : (
 
                                 <div className="
-                                    mt-6
-                                    flex
-                                    justify-end
-                                    gap-3
+                                    rounded-xl
+                                    border
+                                    border-gray-200
+                                    bg-gray-100
+                                    px-4
+                                    py-3
+                                    text-gray-500
                                 ">
-                                    <button
-                                        onClick={() => {
-                                            setModal(null);
-                                            setUnidadSeleccionada(null);
-                                        }}
-                                        className="
-                                            rounded-full
-                                            bg-gray-100
-                                            px-5
-                                            py-2
-                                            text-sm
-                                            hover:bg-gray-200
-                                        "
-                                    >
-                                        Cancelar
-                                    </button>
+                                    {formulario.moneda === 1
+                                        ? "$US"
+                                        : "BOB"
+                                    }
 
-                                    <button
-                                        onClick={() => {
-                                            cambiarPrecio(
-                                                unidadSeleccionada,
-                                                nuevoPrecio
-                                            );
-                                        }}
-                                        className="
-                                            rounded-full
-                                            bg-green-600
-                                            px-5
-                                            py-2
+                                    <span className="
+                                        ml-2
+                                        text-xs
+                                        text-gray-400
+                                    ">
+                                        (Solo administrador)
+                                    </span>
+                                </div>
+
+                            )}
+
+                        </div>
+
+
+                        {/* ESTADO */}
+
+                        <div className="mt-4">
+
+                            <label className="
+                                mb-2
+                                block
+                                text-xs
+                                uppercase
+                                tracking-widest
+                                text-gray-500
+                            ">
+                                Estado
+                            </label>
+
+                            <select
+                                value={formulario.estado}
+                                onChange={(event) =>
+                                    setFormulario(prev => ({
+                                        ...prev,
+                                        estado: Number(event.target.value)
+                                    }))
+                                }
+                                className="
+                                    w-full
+                                    rounded-xl
+                                    border
+                                    border-black/10
+                                    bg-zinc-50
+                                    px-4
+                                    py-3
+                                    outline-none
+                                "
+                            >
+                                <option value={1}>
+                                    Disponible
+                                </option>
+
+                                <option value={2}>
+                                    Vendido
+                                </option>
+                            </select>
+
+                        </div>
+
+
+                        {/* TIPO DE VENTA */}
+
+                        {Number(formulario.estado) === 2 && (
+
+                            <div className="mt-4">
+
+                                <label className="
+                                    mb-2
+                                    block
+                                    text-xs
+                                    uppercase
+                                    tracking-widest
+                                    text-gray-500
+                                ">
+                                    Tipo de venta
+                                </label>
+
+                                <select
+                                    value={formulario.tipoVenta}
+                                    onChange={(event) =>
+                                        setFormulario(prev => ({
+                                            ...prev,
+                                            tipoVenta: Number(
+                                                event.target.value
+                                            )
+                                        }))
+                                    }
+                                    className="
+                                        w-full
+                                        rounded-xl
+                                        border
+                                        border-black/10
+                                        bg-zinc-50
+                                        px-4
+                                        py-3
+                                        outline-none
+                                    "
+                                >
+                                    <option value="">
+                                        Seleccionar tipo de venta
+                                    </option>
+
+                                    {tiposVenta.map((tipo) => (
+                                        <option
+                                            key={tipo.id}
+                                            value={tipo.id}
+                                        >
+                                            {tipo.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+
+                            </div>
+
+                        )}
+
+
+                        {/* DOCUMENTO */}
+
+                        {Number(formulario.estado) === 2 && (
+
+                            <div className="mt-4">
+
+                                <label className="
+                                    mb-2
+                                    block
+                                    text-xs
+                                    uppercase
+                                    tracking-widest
+                                    text-gray-500
+                                ">
+                                    Documento de respaldo
+                                </label>
+
+                                <input
+                                    type="file"
+                                    accept="application/pdf"
+                                    onChange={(event) =>
+                                        setFormulario(prev => ({
+                                            ...prev,
+                                            documentoVenta:
+                                                event.target.files[0] || null
+                                        }))
+                                    }
+                                    className="
+                                        w-full
+                                        rounded-xl
+                                        border
+                                        border-black/10
+                                        bg-zinc-50
+                                        px-4
+                                        py-3
+                                        text-sm
+                                    "
+                                />
+                                {unidadSeleccionada.documentoVenta && (
+                                    <div className="
+                                        mt-3
+                                        rounded-xl
+                                        border
+                                        border-black/10
+                                        bg-zinc-50
+                                        p-3
+                                    ">
+                                        <p className="
+                                            text-xs
+                                            text-gray-500
+                                        ">
+                                            Documento actual
+                                        </p>
+
+                                        <p className="
+                                            mt-1
+                                            truncate
                                             text-sm
                                             font-medium
-                                            text-white
-                                            hover:bg-green-700
-                                        "
-                                    >
-                                        Guardar
-                                    </button>
-                                </div>
-                            </>
+                                            text-gray-700
+                                        ">
+                                            {unidadSeleccionada.documentoVenta
+                                                .split("/")
+                                                .pop()
+                                            }
+                                        </p>
+
+                                        <a
+                                            href={unidadSeleccionada.documentoVenta}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="
+                                                mt-2
+                                                inline-block
+                                                text-sm
+                                                font-medium
+                                                text-blue-600
+                                                hover:text-blue-800
+                                                hover:underline
+                                            "
+                                        >
+                                            Ver documento
+                                        </a>
+                                    </div>
+                                )}
+                            </div>
+
                         )}
+
+
+                        {/* BOTONES */}
+
+                        <div className="
+                            mt-6
+                            flex
+                            justify-end
+                            gap-3
+                        ">
+
+                            <button
+                                onClick={() => {
+                                    setModal(null);
+                                    setUnidadSeleccionada(null);
+
+                                    setFormulario({
+                                        precio: "",
+                                        moneda: 1,
+                                        estado: 1,
+                                        tipoVenta: "",
+                                        documentoVenta: null,
+                                    });
+                                }}
+                                className="
+                                    rounded-full
+                                    bg-gray-100
+                                    px-5
+                                    py-2
+                                    text-sm
+                                    hover:bg-gray-200
+                                "
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                onClick={editarUnidad}
+                                className="
+                                    rounded-full
+                                    bg-green-600
+                                    px-5
+                                    py-2
+                                    text-sm
+                                    font-medium
+                                    text-white
+                                    hover:bg-green-700
+                                "
+                            >
+                                Guardar cambios
+                            </button>
+
+                        </div>
+
                     </div>
                 </div>
             )}
-
         </main>
     );
 }

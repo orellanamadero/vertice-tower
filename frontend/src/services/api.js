@@ -16,20 +16,62 @@ export async function getProyecto() {
 
     return data[0];
 }
-export async function getProyectoRecorrido() {
 
-    const response = await fetch(
-        `${API_URL}/proyectos/1/recorrido/`
-    );
+let recorridoCache = null;
+let recorridoCacheTime = 0;
+let recorridoPromise = null;
 
-    if (!response.ok) {
-        throw new Error(
-            "No se pudo obtener el recorrido"
-        );
+const RECORRIDO_CACHE_TTL = 60 * 1000; // 1 minuto
+
+export function getProyectoRecorridoCache() {
+    if (!recorridoCache) {
+        return null;
     }
 
-    return response.json();
+    const cacheValida =
+        Date.now() - recorridoCacheTime <
+        RECORRIDO_CACHE_TTL;
+
+    if (!cacheValida) {
+        return null;
+    }
+
+    return recorridoCache;
 }
+
+export async function getProyectoRecorrido() {
+    const cached = getProyectoRecorridoCache();
+    if (cached) {
+        return cached;
+    }
+    if (recorridoPromise) {
+        return recorridoPromise;
+    }
+    recorridoPromise = fetch(
+        `${API_URL}/proyectos/1/recorrido/`
+    )
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(
+                    "No se pudo obtener el recorrido"
+                );
+            }
+
+            return response.json();
+        })
+        .then((data) => {
+            recorridoCache = data;
+            recorridoCacheTime = Date.now();
+
+            return data;
+        })
+        .finally(() => {
+            recorridoPromise = null;
+        });
+
+    return recorridoPromise;
+}
+
 export async function descargarFichaTecnica(unidadId) {
 
     const response = await fetch(
@@ -62,11 +104,9 @@ export async function getNosotros() {
     const response = await fetch(
          `${API_URL}/proyectos/1/nosotros/`
     );
-
     if (!response.ok) {
         throw new Error("Error al obtener Nosotros");
     }
-
     return response.json();
 }
 

@@ -7,114 +7,164 @@ function Ubicacion() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+
         async function cargarUbicacion() {
+
             try {
+
                 const data = await getUbicacion();
+
                 setUbicacion(data);
+
             } catch (error) {
+
                 console.error(error);
+
             } finally {
+
                 setLoading(false);
+
             }
+
         }
+
         cargarUbicacion();
+
     }, []);
 
+
     if (loading) {
+
         return (
-            <main className="flex min-h-screen items-center justify-center">
-                <p>Cargando ubicación...</p>
+            <main
+                className="
+                    flex
+                    min-h-screen
+                    items-center
+                    justify-center
+                "
+            >
+                <p>
+                    Cargando ubicación...
+                </p>
             </main>
         );
+
     }
+
 
     if (!ubicacion) {
+
         return (
-            <main className="flex min-h-screen items-center justify-center">
-                <p>No se pudo cargar la información de ubicación.</p>
+            <main
+                className="
+                    flex
+                    min-h-screen
+                    items-center
+                    justify-center
+                "
+            >
+                <p>
+                    No se pudo cargar la información de ubicación.
+                </p>
             </main>
         );
+
     }
 
+
     return (
-<main
-    className="
-        relative
-        min-h-screen
-        w-full
-        bg-white
-        lg:bg-no-repeat
-        lg:bg-cover
-        bg-[position:calc(100%)_center]
-    "
-    style={{
-        backgroundImage: `url(${ubicacion.imageUbicacion})`,
-    }}
->
-    <container
-        className="
-            relative
-            z-10
-            p-0
-            m-0
-            h-[100vh]
-            lg:px-20
-        "
-    >
-        <section className="p-2 m-0 lg:py-15 lg:px-10">
+
+        <main
+            className="
+                relative
+                min-h-[100dvh]
+                w-full
+                overflow-hidden
+                bg-white
+            "
+        >
 
             <div
                 className="
-                    w-full
-                    mt-15
-                    lg:mt-0
-                    p-0
-                lg:grid
-                lg:grid-cols-[1fr_550px]
-                lg:gap-5
+                    absolute
+                    inset-0
+                    bg-cover
+                    bg-center
+                    bg-no-repeat
+                    xl:hidden
                 "
-            >
+                style={{
+                    backgroundImage: `
+                        url(${
+                            ubicacion.imageUbicacionMobile ||
+                            ubicacion.imageUbicacion
+                        })
+                    `,
+                }}
+            />
 
-                {/* MAPA */}
-                <div
+
+            <div
+                className="
+                    absolute
+                    inset-0
+                    hidden
+
+                    bg-cover
+                    bg-center
+                    bg-no-repeat
+
+                    xl:block
+                "
+                style={{
+                    backgroundImage: `
+                        url(${ubicacion.imageUbicacion})
+                    `,
+                }}
+            />
+            <section
+                aria-label="Mapa de ubicación del proyecto"
+                className="
+                    absolute
+                    z-10
+                    left-1/2
+                    top-[52%]
+                    h-[39%]
+                    w-[84%]
+                    -translate-x-1/2
+                    overflow-hidden
+                    rounded-[22px]
+                    bg-white
+                    shadow-xl
+                    xl:left-[5%]
+                    xl:top-[17%]
+                    xl:h-[72%]
+                    xl:w-[57%]
+                    xl:translate-x-0
+                    xl:rounded-2xl
+                    xl:shadow-2xl
+            ">
+                <iframe
+                    src={ubicacion.iframeUbicacion}
                     className="
                         block
+                        h-full
                         w-full
-                        h-[85vh]
-                        m-0
-                        p-0
-                        overflow-hidden
-
-                        lg:w-full
-                        lg:mt-15
-                        lg:h-[730px]
-                        rounded-2xl
-                        shadow-xl
+                        border-0
                     "
-                >
-                    <iframe
-                        src={ubicacion.iframeUbicacion}
-                        className="
-                            block
-                            w-full
-                            h-full
-                            m-0
-                            p-0
-                        "
-                        style={{ border: 0 }}
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        title="Ubicación del proyecto"
-                    />
-                </div>
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Ubicación del proyecto"
+                />
 
-            </div>
+            </section>
 
-        </section>
-    </container>
-</main>
+        </main>
+
     );
+
 }
 
 export default Ubicacion;

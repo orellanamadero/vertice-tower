@@ -17,7 +17,8 @@ class HeroStageSerializer(serializers.ModelSerializer):
         model = HeroStage
         fields = [
             "id",
-            "desktop",
+            "video",
+            "poster",
             "imagenHero",
             "title",
             "subtitle",
@@ -97,6 +98,7 @@ class UbicacionSerializer(serializers.ModelSerializer):
             "ciudad",
             "direccion",
             "imageUbicacion",
+            "imageUbicacionMobile",
             "linkUbicacion",
             "iframeUbicacion",
         ]

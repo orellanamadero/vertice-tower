@@ -1,49 +1,85 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { getProyectoRecorrido } from "../../../services/api";
+import {getProyectoRecorrido,getProyectoRecorridoCache,} from "../../../services/api";
 import FloorPlan from "../components/Recorrido/FloorPlan";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import fondo from "../images/fondo.webp";
 
+function obtenerPisoInicial(project, floorId) {
+    if (!project?.pisos?.length) {
+        return null;
+    }
+
+    return (
+        project.pisos.find(
+            (piso) =>
+                piso.id === Number(floorId)
+        ) ||
+        project.pisos[0]
+    );
+}
 function Recorrido() {
 
     const location = useLocation();
 
     const floorId = location.state?.floorId;
+    const cachedProject = getProyectoRecorridoCache();
 
-    const [project, setProject] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [selectedFloor, setSelectedFloor] = useState(null);
+    const [project, setProject] = useState(cachedProject);
+
+    const [loading, setLoading] = useState(!cachedProject);
+
+    const [selectedFloor, setSelectedFloor] = useState(() => obtenerPisoInicial(
+        cachedProject,
+        floorId)
+    );
+
     const [showFloors, setShowFloors] = useState(false);
-
     const [showHint, setShowHint] = useState(true);
 
     useEffect(() => {
+        let cancelled = false;
+
         async function cargarRecorrido() {
+            const cached = getProyectoRecorridoCache();
+
+            if (cached) {
+                if (cancelled) return;
+                setProject(cached);
+                setSelectedFloor(
+                    obtenerPisoInicial(
+                        cached,
+                        floorId
+                    )
+                );
+                setLoading(false);
+                return;
+            }
+
             try {
                 setLoading(true);
                 const data = await getProyectoRecorrido();
+                if (cancelled) return;
                 setProject(data);
+                setSelectedFloor(
+                    obtenerPisoInicial(
+                        data,
+                        floorId
+                    )
+                );
             } catch (error) {
                 console.error(error);
             } finally {
-                setLoading(false);
+                if (!cancelled) {
+                    setLoading(false);
+                }
             }
         }
         cargarRecorrido();
-    }, [location.key]);
-
-    useEffect(() => {
-        if (!project?.pisos?.length) {
-            return;
-        }
-        const initialFloor =
-            project.pisos.find(
-                piso =>
-                    piso.id === Number(floorId)
-            ) || project.pisos[0];
-        setSelectedFloor(initialFloor);
-    }, [project, floorId]);
+        return () => {
+            cancelled = true;
+        };
+    }, [floorId]);
 
     if (loading) {
         return (
@@ -120,6 +156,10 @@ function Recorrido() {
             >
                 {showHint && (
                     <div
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="recorrido-welcome-title"
+                        aria-describedby="recorrido-welcome-description"
                         className="
                             absolute
                             left-1/2
@@ -157,16 +197,15 @@ function Recorrido() {
                             />
                         )}
 
-                        <h2
+                        <h2 id="recorrido-welcome-title"
                             className="
-                                text-lg
+                                text-base
+                                md:text-lg
                                 font-semibold
-                            "
-                        >
+                        ">
                             BIENVENIDO A TU FUTURO HOGAR
                         </h2>
-
-                        <p
+                        <p id="recorrido-welcome-description"
                             className="
                                 mt-2
                                 text-sm
@@ -177,6 +216,44 @@ function Recorrido() {
                             disponible para conocer sus
                             detalles.
                         </p>
+                        <div
+                            className="
+                                mt-4
+                                flex
+                                items-center
+                                justify-center
+                                gap-5
+                                text-xs
+                                text-white/90
+                                md:text-sm
+                            "
+                        >
+                            <div className="flex items-center gap-2">
+                                <span
+                                    className="
+                                        h-2.5
+                                        w-2.5
+                                        rounded-full
+                                        bg-[var(--color-verde)]
+                                        shadow-sm
+                                    "
+                                />
+                                <span>Disponible</span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <span
+                                    className="
+                                        h-2.5
+                                        w-2.5
+                                        rounded-full
+                                        bg-[var(--color-rojo)]
+                                        shadow-sm
+                                    "
+                                />
+                                <span>Vendido</span>
+                            </div>
+                        </div>
                         <button
                             type="button"
                             onClick={() =>
@@ -203,7 +280,7 @@ function Recorrido() {
 
                     </div>
                 )}
-                <div
+                <nav
                     className="
                         absolute
                         right-4
@@ -268,6 +345,10 @@ function Recorrido() {
                                 mt-2
                                 w-18
                                 lg:w-22
+                                max-h-[calc(100dvh-132px)]
+                                lg:max-h-[calc(100dvh-168px)]
+                                overflow-y-auto
+                                overscroll-contain
                                 rounded-lg
                                 border
                                 border-slate-100
@@ -286,19 +367,17 @@ function Recorrido() {
                                     <button
                                         key={piso.id}
                                         onClick={() => {
-                                            setSelectedFloor(
-                                                piso
-                                            );
-                                            
+                                            setSelectedFloor(piso);
                                         }}
                                         className={`
                                             w-full
+                                            shrink-0
                                             rounded-lg
                                             px-1
                                             py-1.5
                                             my-0.5
                                             text-center
-                                            text-[10px]
+                                            text-xs
                                             lg:text-base
                                             transition
                                             ${
@@ -313,9 +392,10 @@ function Recorrido() {
                                 ))}
                         </div>
                     )}
-                </div>
+                </nav>
 
                 <section
+                    aria-label="Plano interactivo del edificio"
                     className="
                         flex
                         h-full

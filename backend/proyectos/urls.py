@@ -16,6 +16,8 @@ from .views import (
     UsuarioDetailView,
     UnidadPrecioUpdateView,
     UnidadFichaTecnicaView,
+    UnidadEdicionUpdateView,
+    TipoVentaOpcionesView,
 )
 
 
@@ -35,6 +37,7 @@ urlpatterns = [
     path("usuarios/",UsuarioListCreateView.as_view(),name="usuarios"),
     path("usuarios/<int:pk>/",UsuarioDetailView.as_view(),name="usuario-detail"),
     path("unidades/<int:pk>/precio/",UnidadPrecioUpdateView.as_view(),),
-    path("unidades/<int:pk>/ficha-tecnica/",UnidadFichaTecnicaView.as_view()
-),
+    path("unidades/<int:pk>/ficha-tecnica/",UnidadFichaTecnicaView.as_view(),),
+    path("unidades/<int:pk>/editar/", UnidadEdicionUpdateView.as_view(), name="unidad-editar"),
+    path("unidades/tipos-venta/", TipoVentaOpcionesView.as_view(), name="unidad-tipos-venta",),
 ]

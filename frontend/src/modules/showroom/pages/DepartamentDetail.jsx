@@ -12,30 +12,23 @@ function DepartmentDetail() {
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState("3d");
-    const [showInfo, setShowInfo] = useState(null);
+    const [showInfo, setShowInfo] = useState(false);
 
     const navigate = useNavigate();
-
     const { floorId, codigo } = useParams();
-
     const [position, setPosition] = useState({
         x: 0,
         y: 0,
     });
-
     const dragging = useRef(false);
-
     const startTouch = useRef({
         x: 0,
         y: 0,
     });
 
     const handleTouchStart = (e) => {
-
         const touch = e.touches[0];
-
         dragging.current = true;
-
         startTouch.current = {
             x: touch.clientX - position.x,
             y: touch.clientY - position.y,
@@ -83,159 +76,93 @@ function DepartmentDetail() {
 
     }, []);
 
-    /*
-     * BUSCAR PISO
-     */
-
     const floor = project?.pisos?.find(
         piso => piso.id === Number(floorId)
     );
-
-    /*
-     * BUSCAR UNIDAD
-     *
-     * La unidad concreta está dentro del piso.
-     * El código pertenece a TipoUnidad.
-     */
 
     const unit = floor?.unidades?.find(
         unidad =>
             unidad.tipoUnidad?.codigo === codigo
     );
 
-    /*
-     * CONFIGURAR VISTA INICIAL
-     */
-
     useEffect(() => {
 
         if (!unit) return;
-
         const tipoUnidad = unit.tipoUnidad;
-
         if (tipoUnidad.render3D) {
-
             setView("3d");
-
             return;
         }
-
         if (tipoUnidad.planoTecnico) {
-
             setView("technical");
-
             return;
         }
-
         if (
             Array.isArray(tipoUnidad.galeria) &&
             tipoUnidad.galeria.length > 0
         ) {
-
             setView("gallery");
-
             return;
         }
-
         if (tipoUnidad.tour360) {
-
             setView("tour");
-
             return;
         }
-
     }, [unit]);
 
-    /*
-     * LOADING
-     */
-
     if (loading) {
-
         return (
             <main className="min-h-screen flex items-center justify-center">
-
                 <p>
                     Cargando unidad...
                 </p>
-
             </main>
         );
     }
 
-    /*
-     * PROYECTO NO ENCONTRADO
-     */
-
     if (!project) {
-
         return (
             <main className="min-h-screen flex items-center justify-center">
-
                 <div className="text-center">
-
                     <h1 className="text-3xl font-bold">
                         Proyecto no encontrado
                     </h1>
-
                 </div>
-
             </main>
         );
     }
 
-    /*
-     * PISO NO ENCONTRADO
-     */
-
     if (!floor) {
-
         return (
             <main className="min-h-screen flex items-center justify-center">
-
                 <div className="text-center">
-
                     <h1 className="text-3xl font-bold">
                         Piso no encontrado
                     </h1>
-
                     <p className="mt-3 text-slate-500">
                         El piso {floorId} no existe.
                     </p>
-
                 </div>
-
             </main>
         );
     }
 
-    /*
-     * UNIDAD NO ENCONTRADA
-     */
-
     if (!unit) {
-
         return (
             <main className="min-h-screen flex items-center justify-center">
-
                 <div className="text-center">
-
                     <h1 className="text-3xl font-bold">
                         Unidad no encontrada
                     </h1>
-
                     <p className="mt-3 text-slate-500">
                         La unidad {codigo} no existe en el piso {floor.numero}.
                     </p>
-
                 </div>
-
             </main>
         );
     }
 
     return (
-
         <main
             className="
                 relative
@@ -243,7 +170,6 @@ function DepartmentDetail() {
                 overflow-hidden
             "
         >
-
             <div
                 className="
                     relative
@@ -252,9 +178,6 @@ function DepartmentDetail() {
                     overflow-hidden
                 "
             >
-
-                {/* UBICACIÓN EN PISO */}
-
                 <button
                     onClick={() =>
                         navigate("/recorrido", {
@@ -263,11 +186,9 @@ function DepartmentDetail() {
                             },
                         })
                     }
-
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
-
                     style={{
                         transform: `
                             translate(
@@ -276,7 +197,6 @@ function DepartmentDetail() {
                             )
                         `,
                     }}
-
                     className="
                         group
                         fixed
@@ -301,11 +221,8 @@ function DepartmentDetail() {
                         touch-none
                         cursor-grab
                         active:cursor-grabbing
-                    "
-                >
-
+                ">
                     {unit.tipoUnidad.frame && (
-
                         <img
                             src={unit.tipoUnidad.frame}
                             alt="Ubicación en piso"
@@ -316,9 +233,7 @@ function DepartmentDetail() {
                                 m-0
                             "
                         />
-
                     )}
-
                     <span
                         className="
                             absolute
@@ -339,23 +254,22 @@ function DepartmentDetail() {
                     >
                         Ubicación en Piso
                     </span>
-
                 </button>
-
                 {unit.tipoUnidad?.categoriaNombre !== "AREA COMUN" && (
-                    <div
+                    <aside
+                        id="unidad-info-panel"
+                        aria-label="Información de la unidad"
                         className={`
                             absolute
                             left-0
                             top-0
-                            w-[280px]
+                            w-[250px]
                             h-full
                             z-100
                             shadow-[8px_0_18px_-10px_rgba(0,0,0,0.35)]
                             transition-all
                             duration-500
                             ease-out
-
                             ${
                                 showInfo
                                     ? "translate-x-0"
@@ -368,12 +282,11 @@ function DepartmentDetail() {
                             unidad={unit}
                             floor={floor}
                         />
-                    </div>
+                    </aside>
                 )}
 
-                {/* VISUALIZADOR */}
-
                 <section
+                    aria-label="Visualización de la unidad"
                     className={`
                         relative
                         h-full
@@ -392,12 +305,10 @@ function DepartmentDetail() {
                         }
                     `}
                 >
-
                     <UnidadViewer
                         view={view}
                         unit={unit}
                     />
-
                     <UnidadViewSelector
                         view={view}
                         setView={setView}
@@ -409,7 +320,15 @@ function DepartmentDetail() {
             </div>
             {unit.tipoUnidad?.categoriaNombre !== "AREA COMUN" && (
                 <button
+                    type="button"
                     onClick={() => setShowInfo(!showInfo)}
+                    aria-label={
+                        showInfo
+                            ? "Ocultar información de la unidad"
+                            : "Mostrar información de la unidad"
+                    }
+                    aria-expanded={Boolean(showInfo)}
+                    aria-controls="unidad-info-panel"
                     className="
                         fixed
                         left-0

@@ -4,9 +4,6 @@ import TeamCard from "../components/nosotros/TeamCard";
 import TitleCard from "../components/nosotros/TitleCard";
 import { useState, useEffect } from "react";
 import Section from "../../../shared/components/section/Section";
-import image1 from "../images/nosotros/1.png";
-import image2 from "../images/nosotros/2.png";
-
 
 function Nosotros() {
     const [data, setData] = useState(null);
@@ -39,6 +36,21 @@ function Nosotros() {
         );
     }
 
+    const nosotros = data?.nosotros;
+    const imagenes = Array.isArray(nosotros?.imagenes)
+        ? [...nosotros.imagenes].sort(
+            (a, b) => Number(a.orden) - Number(b.orden)
+        )
+        : [];
+    const imagenProyecto = imagenes[0]?.image ?? null;
+    const imagenCompromiso =
+        imagenes[1]?.image ??
+        imagenes[0]?.image ??
+        null;
+    const equipo = Array.isArray(data?.equipo)
+        ? data.equipo
+        : [];
+
     return (
         <main
             className="
@@ -48,7 +60,7 @@ function Nosotros() {
             <Container>
                 <Section>
                     <TitleCard
-                        image={image1}
+                        image={imagenProyecto}
                         label="Proyecto"
                         title="Espacios para disfrutar"
                         highlight="cada momento"
@@ -62,15 +74,13 @@ function Nosotros() {
                         "
                     >
 
-                        {/* MISIÓN */}
-
                         <article
                             className="
                                 p-6
+                                text-center
                                 md:p-10
-                            "
-                        >
-
+                                md:text-left
+                        ">
                             <span
                                 className="
                                     block
@@ -105,7 +115,7 @@ function Nosotros() {
                                     md:text-base
                                 "
                             >
-                                {data.nosotros.mision}
+                                {nosotros?.mision}
                             </p>
 
                         </article>
@@ -116,10 +126,10 @@ function Nosotros() {
                         <article
                             className="
                                 p-6
+                                text-center
                                 md:p-10
-                            "
-                        >
-
+                                md:text-left
+                        ">
                             <span
                                 className="
                                     block
@@ -154,26 +164,24 @@ function Nosotros() {
                                     md:text-base
                                 "
                             >
-                                {data.nosotros.vision}
+                                {nosotros?.vision}
                             </p>
 
                         </article>
 
                     </section>
 
-
-                    {/* =====================================
-                        EQUIPO
-                    ====================================== */}
-                    <section className="mt-16 md:mt-20 px-10">
+                    <section className="mt-16 md:mt-20 px-3 md:px-10">
 
                         <div
                             className="
                                 mb-10
                                 md:mb-12
+                                text-center
+                                md:p-10
+                                md:text-left
                             "
                         >
-
                             <span
                                 className="
                                     text-xs
@@ -199,9 +207,6 @@ function Nosotros() {
 
                         </div>
 
-
-                        {/* FICHAS */}
-
                         <div
                             className="
                                 grid
@@ -212,7 +217,7 @@ function Nosotros() {
                             "
                         >
 
-                            {data.equipo.map((person) => (
+                            {equipo.map((person) => (
 
                                 <TeamCard
                                     key={person.id}
@@ -225,30 +230,24 @@ function Nosotros() {
 
                     </section>
                     <TitleCard
-                        image={image2}
+                        image={imagenCompromiso}
                         label="Comprometidos"
                         title="PARA BRINDARTE"
                         highlight="UNA EXPERIENCIA INOLVIDABLE"
                     />
                     <section
-                        className="
-                           my-16 md:my-20 px-10
-                        "
+                        className="mt-16 md:mt-20 px-3 md:px-10"
                     >
-
-                        <div className="mb-10">
-
+                        <div className="mb-10 text-center md:p-10 md:text-left">
                             <span
                                 className="
                                     text-xs
                                     uppercase
                                     tracking-[0.3em]
                                     text-gray-500
-                                "
-                            >
+                            ">
                                 Lo que nos representa
                             </span>
-
                             <h2
                                 className="
                                     mt-2

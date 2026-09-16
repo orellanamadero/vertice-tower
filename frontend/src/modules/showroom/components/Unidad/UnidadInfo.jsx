@@ -100,7 +100,6 @@ function UnidadInfo({ project, unidad, floor }) {
                 overflow-y-auto
                 p-3
                 pt-30
-
                 md:right-auto
                 md:bottom-0
                 md:left-0
@@ -112,26 +111,18 @@ function UnidadInfo({ project, unidad, floor }) {
                 md:flex
                 md:flex-col
                 md:pt-40
-            "
-        >
-
-            {/* =========================
-                INFORMACIÓN PRINCIPAL
-            ========================= */}
-
+        ">
             <div className="p-3 mb-2 pt-1">
-
                 <h2
                     className="
-                        text-xl
+                        text-lg
+                        lg:text-xl
                         font-semibold
                         leading-tight
                         text-slate-900
-                    "
-                >
+                ">
                     {tipoUnidad?.nombre}
                 </h2>
-
                 <p
                     className="
                         mt-1
@@ -139,20 +130,18 @@ function UnidadInfo({ project, unidad, floor }) {
                         text-sm
                         text-slate-500
                         uppercase
-                    "
-                >
+                ">
                     {tipoUnidad?.tipo}
                 </p>
-
                 <p
                     className="
                         mt-1
-                        text-2xl
+                        text-xl
+                        lg:text-2xl
                         font-bold
                         leading-tight
                         text-slate-900
-                    "
-                >
+                ">
                     {unidad.precio != null
                         ? Number(unidad.precio).toLocaleString("es-BO", {
                             minimumFractionDigits: 2,
@@ -180,29 +169,19 @@ function UnidadInfo({ project, unidad, floor }) {
                 >
                     {statusNombre ?? "No disponible"}
                 </span>
-
             </div>
 
-
-            {/* =========================
-                SUPERFICIE
-            ========================= */}
-
             <div className="my-2 border-t border-slate-200">
-
                 <div className="p-3">
-
                     <h3
                         className="
                             text-base
                             font-semibold
                             text-slate-800
                             mb-2
-                        "
-                    >
+                    ">
                         Superficie
                     </h3>
-
                     {tipoUnidad?.superficie != null && (
                         <UnidadCaracteristica
                             icon={<LiaRulerCombinedSolid />}
@@ -210,41 +189,27 @@ function UnidadInfo({ project, unidad, floor }) {
                             value={`${tipoUnidad.superficie} m²`}
                         />
                     )}
-
                     <UnidadCaracteristica
                         icon={<HiOutlineSquare3Stack3D />}
                         label="Piso"
                         value={`${floor.numero}°`}
                     />
-
                 </div>
-
             </div>
 
-
-            {/* =========================
-                DISTRIBUCIÓN
-            ========================= */}
-
             {tipoUnidad?.categoriaNombre === "DEPARTAMENTO" && (
-
                 <div className="my-2 border-t border-slate-200">
-
                     <div className="p-3">
-
                         <h3
                             className="
                                 text-base
                                 font-semibold
                                 text-slate-800
                                 mb-2
-                            "
-                        >
+                        ">
                             Distribución
                         </h3>
-
                         <div>
-
                             {caracteristicas
                                 .filter(
                                     item =>
@@ -259,20 +224,11 @@ function UnidadInfo({ project, unidad, floor }) {
                                         label={item.label}
                                         value={item.value}
                                     />
-
                                 ))}
-
                         </div>
-
                     </div>
-
                 </div>
             )}
-
-
-            {/* =========================
-                ACCIONES
-            ========================= */}
 
             <div
                 className="
@@ -280,8 +236,7 @@ function UnidadInfo({ project, unidad, floor }) {
                     flex-col
                     mt-auto
                     border-slate-200
-                "
-            >
+            ">
                     <a
                         href={whatsappUrl}
                         target="_blank"
@@ -303,13 +258,10 @@ function UnidadInfo({ project, unidad, floor }) {
                             shadow-lg
                         "
                     >
-
                         <FaWhatsapp className="size-5" />
-
                         Solicitar información
-
                     </a>
-                                        <button
+                    <button
                         type="button"
                         onClick={handleDescargarFicha}
                         disabled={descargandoFicha}
@@ -329,17 +281,13 @@ function UnidadInfo({ project, unidad, floor }) {
                             shadow-lg
                             disabled:cursor-not-allowed
                             disabled:opacity-60
-                        "
-                    >
+                    ">
                         <VscFilePdf className="size-5" />
-
                         {descargandoFicha
                             ? "Generando ficha..."
                             : "Ficha técnica"
                         }
-
                     </button>
-
                     <a
                         href={project.brochure}
                         download
@@ -357,16 +305,11 @@ function UnidadInfo({ project, unidad, floor }) {
                             transition
                             hover:bg-slate-900
                             shadow-lg
-                        "
-                    >
-
+                    ">
                         <VscFilePdf className="size-5" />
-
                         Brochure
-
                     </a>
             </div>
-
         </aside>
     );
 }

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import HeroBackground from "./HeroBackground";
 import { GoArrowRight } from "react-icons/go";
+import {getProyectoRecorrido} from "../../../../services/api";
 
 function HeroProject({ project }) {
     const navigate = useNavigate();
@@ -15,10 +16,42 @@ function HeroProject({ project }) {
         : [];
 
     const currentStage = stages[stage];
+    const nextStage = stages[stage + 1];
 
-    const isLastStage =
-        stages.length > 0 && stage === stages.length - 1;
+    const isLastStage = stages.length > 0 && stage === stages.length - 1;
+    useEffect(() => {
+        if (!isLastStage) {
+            return;
+        }
+        const connection =
+            navigator.connection ||
+            navigator.mozConnection ||
+            navigator.webkitConnection;
 
+        const conexionMuyLenta =
+            connection?.saveData ||
+            connection?.effectiveType === "2g" ||
+            connection?.effectiveType === "slow-2g";
+
+        if (conexionMuyLenta) {
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            getProyectoRecorrido().catch(
+                (error) => {
+                    console.error(
+                        "No se pudo precargar el recorrido:",
+                        error
+                    );
+                }
+            );
+        }, 1000);
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [isLastStage]);
     if (!currentStage) {
         return null;
     }
@@ -53,7 +86,10 @@ function HeroProject({ project }) {
             "
         >
             <HeroBackground
-                desktopVideo={currentStage.desktop}
+                desktopVideo={currentStage.video}
+                nextVideo={nextStage?.video}
+                currentPoster={currentStage.poster}
+                nextPoster={nextStage?.poster}
                 loop={stage === 0 || stage === 1}
                 muted={stage === 0}
                 onTimeUpdate={handleTimeUpdate}
@@ -115,11 +151,10 @@ function HeroProject({ project }) {
                         {/* SUBTÍTULO */}
                         <span
                             className="
-                                my-2
-                                md:my-4
+                                my-4
                                 lg:my-6
                                 block
-                                tracking-[0.3em]
+                                tracking-[0.2em]
                                 text-white/90
                                 text-xs
                                 md:text-sm

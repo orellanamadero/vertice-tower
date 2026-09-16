@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { getProyectoBase } from "../../../services/api";
 
 const menuItems = [
     { label: "Home", path: "/" },
@@ -12,46 +11,37 @@ const menuItems = [
     { label: "Contáctanos", path: "/contacto" },
 ];
 
-function NavbarProject() {
-    const [project, setProject] = useState(null);
+function NavbarProject({ project }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    useEffect(() => {
-        const cargarNavbar = async () => {
-            try {
-                const data = await getProyectoBase();
-                setProject(data);
-            } catch (error) {
-                console.error(error);
-            }
-        };
+    const closeMenu = () => {
+        setIsMenuOpen(false);
+    };
 
-        cargarNavbar();
-    }, []);
-
-    const closeMenu = () => setIsMenuOpen(false);
+    const empresa = project?.empresa;
 
     return (
         <header
             className="
                 fixed
-                top-0
                 left-0
+                top-0
                 z-60
-                w-full
                 h-15
+                w-full
+                bg-black/65
                 lg:h-17
-                bg-black/60
-                justify-center
             "
         >
-            <div className="
-                max-w-8xl
-                mx-auto
-                px-0
-                md:px-3
-                lg:px-20
-            ">
+            <div
+                className="
+                    mx-auto
+                    max-w-8xl
+                    px-0
+                    md:px-3
+                    lg:px-20
+                "
+            >
                 <nav
                     className="
                         relative
@@ -61,6 +51,7 @@ function NavbarProject() {
                         p-3
                     "
                 >
+                    {/* LOGO */}
                     <Link
                         to="/"
                         onClick={closeMenu}
@@ -73,24 +64,45 @@ function NavbarProject() {
                             text-stone-50
                             md:pl-0
                         "
+                        aria-label="Ir al inicio"
                     >
-                        <img
-                            src={project?.empresa.logo1}
-                            alt={project?.empresa.nombre}
-                            className="
-                                h-8
-                                lg:h-10
-                                w-auto
-                                max-w-[180px]
-                                object-contain
-                            "
-                        />
+                        {empresa?.logo1 ? (
+                            <img
+                                src={empresa.logo1}
+                                alt={
+                                    empresa.nombre ||
+                                    "Logo del proyecto"
+                                }
+                                className="
+                                    h-8
+                                    w-auto
+                                    max-w-[180px]
+                                    object-contain
+                                    lg:h-10
+                                "
+                            />
+                        ) : (
+                            <div
+                                className="
+                                    h-8
+                                    w-[120px]
+                                    animate-pulse
+                                    rounded
+                                    bg-white/10
+                                    lg:h-10
+                                "
+                            />
+                        )}
                     </Link>
 
                     {/* BOTÓN HAMBURGUESA */}
                     <button
                         type="button"
-                        onClick={() => setIsMenuOpen((open) => !open)}
+                        onClick={() =>
+                            setIsMenuOpen(
+                                (open) => !open
+                            )
+                        }
                         className="
                             flex
                             flex-col
@@ -100,9 +112,12 @@ function NavbarProject() {
                             md:hidden
                         "
                         aria-label={
-                            isMenuOpen ? "Cerrar menú" : "Abrir menú"
+                            isMenuOpen
+                                ? "Cerrar menú"
+                                : "Abrir menú"
                         }
                         aria-expanded={isMenuOpen}
+                        aria-controls="mobile-project-menu"
                     >
                         <span
                             className={`
@@ -128,7 +143,11 @@ function NavbarProject() {
                                 bg-current
                                 transition
                                 duration-300
-                                ${isMenuOpen ? "opacity-0" : ""}
+                                ${
+                                    isMenuOpen
+                                        ? "opacity-0"
+                                        : ""
+                                }
                             `}
                         />
 
@@ -155,11 +174,11 @@ function NavbarProject() {
                             hidden
                             items-center
                             gap-6
-                            lg:gap-8
                             text-xs
-                            md:text-sm
                             text-stone-50
                             md:flex
+                            md:text-sm
+                            lg:gap-8
                         "
                     >
                         {menuItems.map((item) => (
@@ -175,6 +194,7 @@ function NavbarProject() {
 
                     {/* MENÚ MÓVIL */}
                     <div
+                        id="mobile-project-menu"
                         className={`
                             absolute
                             right-0
@@ -191,7 +211,7 @@ function NavbarProject() {
                             ${
                                 isMenuOpen
                                     ? "max-h-96 opacity-100"
-                                    : "max-h-0 opacity-0"
+                                    : "pointer-events-none max-h-0 opacity-0"
                             }
                         `}
                     >
@@ -215,9 +235,9 @@ function NavbarProject() {
                                         text-right
                                         text-sm
                                         text-slate-50
+                                        text-shadow-lg
                                         hover:bg-slate-50
                                         hover:text-black
-                                        text-shadow-lg
                                     "
                                 >
                                     {item.label}

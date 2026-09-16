@@ -16,7 +16,6 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
-      # Dentro de la red de docker compose, el host de la DB es el nombre del servicio
       - POSTGRES_HOST=db
     depends_on:
       db:
