@@ -104,7 +104,7 @@ function UnidadInfo({ project, unidad, floor }) {
                 md:bottom-0
                 md:left-0
                 md:h-auto
-                md:w-70
+                md:w-[270px]
                 md:p-6
                 md:bg-white/95
                 md:z-110

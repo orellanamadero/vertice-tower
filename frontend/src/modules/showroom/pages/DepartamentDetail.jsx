@@ -263,7 +263,7 @@ function DepartmentDetail() {
                             absolute
                             left-0
                             top-0
-                            w-[250px]
+                            w-[270px]
                             h-full
                             z-100
                             shadow-[8px_0_18px_-10px_rgba(0,0,0,0.35)]
@@ -300,7 +300,7 @@ function DepartmentDetail() {
 
                         ${
                             showInfo
-                                ? "ml-[280px]"
+                                ? "ml-[270px]"
                                 : "ml-0"
                         }
                     `}
