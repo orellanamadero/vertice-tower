@@ -9,7 +9,6 @@ function obtenerPisoInicial(project, floorId) {
     if (!project?.pisos?.length) {
         return null;
     }
-
     return (
         project.pisos.find(
             (piso) =>
@@ -19,16 +18,11 @@ function obtenerPisoInicial(project, floorId) {
     );
 }
 function Recorrido() {
-
     const location = useLocation();
-
     const floorId = location.state?.floorId;
     const cachedProject = getProyectoRecorridoCache();
-
     const [project, setProject] = useState(cachedProject);
-
     const [loading, setLoading] = useState(!cachedProject);
-
     const [selectedFloor, setSelectedFloor] = useState(() => obtenerPisoInicial(
         cachedProject,
         floorId)
@@ -39,45 +33,74 @@ function Recorrido() {
 
     useEffect(() => {
         let cancelled = false;
-
-        async function cargarRecorrido() {
-            const cached = getProyectoRecorridoCache();
-
-            if (cached) {
-                if (cancelled) return;
-                setProject(cached);
-                setSelectedFloor(
-                    obtenerPisoInicial(
-                        cached,
-                        floorId
-                    )
-                );
-                setLoading(false);
-                return;
-            }
-
+        const actualizarRecorrido = async (forzar = false) => {
             try {
-                setLoading(true);
-                const data = await getProyectoRecorrido();
+                const data = await getProyectoRecorrido(forzar);
                 if (cancelled) return;
                 setProject(data);
-                setSelectedFloor(
-                    obtenerPisoInicial(
+                setSelectedFloor((pisoActual) => {
+                    const pisoIdActual =
+                        pisoActual?.id ?? floorId;
+                    return obtenerPisoInicial(
                         data,
-                        floorId
-                    )
-                );
+                        pisoIdActual
+                    );
+                });
+                setLoading(false);
             } catch (error) {
-                console.error(error);
-            } finally {
+                console.error(
+                    "Error al actualizar recorrido:",
+                    error
+                );
                 if (!cancelled) {
                     setLoading(false);
                 }
             }
+        };
+
+        const cached = getProyectoRecorridoCache();
+        if (cached) {
+            setProject(cached);
+            setSelectedFloor(
+                obtenerPisoInicial(
+                    cached,
+                    floorId
+                )
+            );
+            setLoading(false);
+            actualizarRecorrido(true);
+        } else {
+            setLoading(true);
+            actualizarRecorrido(true);
         }
-        cargarRecorrido();
+
+        const intervalId = setInterval(() => {
+            actualizarRecorrido(true);
+        }, 5000);
+        const actualizarAlVolver = () => {
+            if (document.visibilityState === "visible") {
+                actualizarRecorrido(true);
+            }
+        };
+        window.addEventListener(
+            "focus",
+            actualizarAlVolver
+        );
+        document.addEventListener(
+            "visibilitychange",
+            actualizarAlVolver
+        );
         return () => {
             cancelled = true;
+            clearInterval(intervalId);
+            window.removeEventListener(
+                "focus",
+                actualizarAlVolver
+            );
+            document.removeEventListener(
+                "visibilitychange",
+                actualizarAlVolver
+            );
         };
     }, [floorId]);
 
@@ -89,8 +112,7 @@ function Recorrido() {
                     min-h-screen
                     items-center
                     justify-center
-                "
-            >
+            ">
                 <p>
                     Cargando recorrido...
                 </p>
@@ -106,16 +128,13 @@ function Recorrido() {
                     min-h-screen
                     items-center
                     justify-center
-                "
-            >
+            ">
                 <p>
-                    No se pudo cargar la información
-                    del recorrido.
+                    No se pudo cargar la información del recorrido.
                 </p>
             </main>
         );
     }
-
     if (!selectedFloor) {
         return (
             <main
@@ -124,8 +143,7 @@ function Recorrido() {
                     min-h-screen
                     items-center
                     justify-center
-                "
-            >
+            ">
                 <p>
                     No hay pisos disponibles.
                 </p>
@@ -152,8 +170,7 @@ function Recorrido() {
                     h-full
                     w-full
                     overflow-hidden
-                "
-            >
+            ">
                 {showHint && (
                     <div
                         role="dialog"
@@ -177,8 +194,7 @@ function Recorrido() {
                             text-center
                             text-white
                             shadow-2xl
-                        "
-                    >
+                    ">
                         {project?.empresa?.logo2 && (
                             <img
                                 src={project.empresa.logo2}
@@ -210,8 +226,7 @@ function Recorrido() {
                                 mt-2
                                 text-sm
                                 text-white
-                            "
-                        >
+                        ">
                             Toca sobre un departamento
                             disponible para conocer sus
                             detalles.
@@ -226,8 +241,7 @@ function Recorrido() {
                                 text-xs
                                 text-white/90
                                 md:text-sm
-                            "
-                        >
+                        ">
                             <div className="flex items-center gap-2">
                                 <span
                                     className="
@@ -284,11 +298,9 @@ function Recorrido() {
                                 hover:bg-slate-900
                                 hover:text-white
                                 active:scale-95
-                            "
-                        >
+                        ">
                             Aceptar
                         </button>
-
                     </div>
                 )}
                 <nav
@@ -345,7 +357,6 @@ function Recorrido() {
                                 className="size-5 md:size-6"
                             />
                         </span>
-
                     </button>
 
                     {showFloors && (
@@ -366,8 +377,7 @@ function Recorrido() {
                                 bg-white/70
                                 p-1
                                 shadow-2xl
-                            "
-                        >
+                        ">
                             {[...project.pisos]
                                 .sort(
                                     (a, b) =>
@@ -414,8 +424,7 @@ function Recorrido() {
                         items-center
                         justify-center
                         overflow-hidden
-                    "
-                >
+                ">
                     <FloorPlan
                         project={project}
                         floor={selectedFloor}

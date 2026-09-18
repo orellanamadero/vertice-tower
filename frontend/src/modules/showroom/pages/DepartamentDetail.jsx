@@ -13,7 +13,6 @@ function DepartmentDetail() {
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState("3d");
     const [showInfo, setShowInfo] = useState(false);
-
     const navigate = useNavigate();
     const { floorId, codigo } = useParams();
     const [position, setPosition] = useState({
@@ -156,16 +155,14 @@ function DepartmentDetail() {
                 relative
                 h-[100vh]
                 overflow-hidden
-            "
-        >
+        ">
             <div
                 className="
                     relative
                     w-full
                     h-full
                     overflow-hidden
-                "
-            >
+            ">
                 <button
                     onClick={() =>
                         navigate("/recorrido", {
@@ -285,7 +282,6 @@ function DepartmentDetail() {
                         transition-[margin]
                         duration-500
                         ease-out
-
                         ${
                             showInfo
                                 ? "ml-[270px]"
@@ -302,9 +298,7 @@ function DepartmentDetail() {
                         setView={setView}
                         unit={unit}
                     />
-
                 </section>
-
             </div>
             {unit.tipoUnidad?.categoriaNombre !== "AREA COMUN" && (
                 <button
@@ -339,8 +333,7 @@ function DepartmentDetail() {
                         lg:h-12
                         lg:w-12
                         lg:rounded-full
-                    "
-                >
+                ">
                     {showInfo ? (
                         <HiMiniArrowLeftStartOnRectangle className="size-6" />
                     ) : (

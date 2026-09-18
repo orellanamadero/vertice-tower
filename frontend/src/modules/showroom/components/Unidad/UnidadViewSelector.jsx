@@ -8,7 +8,6 @@ function UnidadViewSelector({
     }
 
     const tipoUnidad = unit.tipoUnidad;
-
     const views = [
         {
             key: "3d",
@@ -58,8 +57,7 @@ function UnidadViewSelector({
                 w-[320px]
                 md:w-[410px]
                 lg:w-auto
-            "
-        >
+        ">
             {availableViews.map((item) => (
                 <button
                     key={item.key}

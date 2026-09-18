@@ -3,7 +3,6 @@ import { apiFetch } from "../services/api";
 import { CiEdit } from "react-icons/ci";
 import UsuarioForm from "../components/UsuarioForm";
 
-
 const formularioInicial = {
     username: "",
     first_name: "",
@@ -14,110 +13,62 @@ const formularioInicial = {
     is_active: true,
 };
 
-
 function Usuarios() {
-
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const [usuarioEditar, setUsuarioEditar] = useState(null);
     const [mostrarNuevoUsuario, setMostrarNuevoUsuario] = useState(false);
-
     const [formulario, setFormulario] = useState(
         formularioInicial
     );
-
     const [guardando, setGuardando] = useState(false);
     const [mensajeExito, setMensajeExito] = useState("");
-
-
-    // ==========================================
-    // CARGAR USUARIOS
-    // ==========================================
-
     const cargarUsuarios = async () => {
-
         try {
-
             const response = await apiFetch(
                 "/proyectos/usuarios/"
             );
-
             if (!response.ok) {
                 throw new Error(
                     "No se pudieron cargar los usuarios"
                 );
             }
-
             const data = await response.json();
-
             setUsuarios(data);
-
         } catch (error) {
-
             console.error(error);
-
         } finally {
-
             setLoading(false);
-
         }
-
     };
-
-
     useEffect(() => {
         cargarUsuarios();
     }, []);
 
-
-    // ==========================================
-    // MENSAJE DE ÉXITO
-    // ==========================================
-
     const mostrarMensaje = (mensaje) => {
-
         setMensajeExito(mensaje);
-
         setTimeout(() => {
             setMensajeExito("");
         }, 3000);
 
     };
 
-
-    // ==========================================
-    // NUEVO USUARIO
-    // ==========================================
-
     const abrirNuevoUsuario = () => {
-
         setFormulario(formularioInicial);
-
         setMostrarNuevoUsuario(true);
-
     };
 
-
     const cerrarNuevoUsuario = () => {
-
         if (guardando) {
             return;
         }
-
         setMostrarNuevoUsuario(false);
-
     };
 
-
     const crearUsuario = async (event) => {
-
         event.preventDefault();
-
         setGuardando(true);
-
         try {
-
             const response = await apiFetch(
                 "/proyectos/usuarios/",
                 {
@@ -128,54 +79,31 @@ function Usuarios() {
                     body: JSON.stringify(formulario),
                 }
             );
-
             if (!response.ok) {
-
                 const errorData = await response.json();
-
                 console.error(errorData);
-
                 throw new Error(
                     "No se pudo crear el usuario"
                 );
-
             }
-
             await cargarUsuarios();
-
             setMostrarNuevoUsuario(false);
-
             setFormulario(formularioInicial);
-
             mostrarMensaje(
                 "Usuario creado correctamente."
             );
-
         } catch (error) {
-
             console.error(error);
-
             alert(
                 "No se pudo crear el usuario."
             );
-
         } finally {
-
             setGuardando(false);
-
         }
-
     };
 
-
-    // ==========================================
-    // EDITAR USUARIO
-    // ==========================================
-
     const handleEditar = (usuario) => {
-
         setUsuarioEditar(usuario);
-
         setFormulario({
             username: usuario.username || "",
             first_name: usuario.first_name || "",
@@ -185,33 +113,22 @@ function Usuarios() {
             password: "",
             is_active: usuario.is_active,
         });
-
     };
 
-
     const cerrarModal = () => {
-
         if (guardando) {
             return;
         }
-
         setUsuarioEditar(null);
-
     };
 
-
     const guardarCambios = async (event) => {
-
         event.preventDefault();
-
         if (!usuarioEditar) {
             return;
         }
-
         setGuardando(true);
-
         try {
-
             const datos = {
                 username: formulario.username,
                 first_name: formulario.first_name,
@@ -220,13 +137,9 @@ function Usuarios() {
                 group: formulario.group,
                 is_active: formulario.is_active,
             };
-
-
             if (formulario.password.trim()) {
                 datos.password = formulario.password;
             }
-
-
             const response = await apiFetch(
                 `/proyectos/usuarios/${usuarioEditar.id}/`,
                 {
@@ -238,89 +151,50 @@ function Usuarios() {
                 }
             );
 
-
             if (!response.ok) {
-
                 const errorData = await response.json();
-
                 console.error(errorData);
-
                 throw new Error(
                     "No se pudieron guardar los cambios"
                 );
-
             }
-
-
             await cargarUsuarios();
-
             cerrarModal();
-
             mostrarMensaje(
                 "Cambios guardados correctamente."
             );
-
-
         } catch (error) {
-
             console.error(error);
-
             alert(
                 "No se pudieron guardar los cambios."
             );
-
         } finally {
-
             setGuardando(false);
-
         }
-
     };
 
-
-    // ==========================================
-    // LOADING
-    // ==========================================
-
     if (loading) {
-
         return (
-
             <main className="
                 flex
                 min-h-screen
                 items-center
                 justify-center
             ">
-
                 <p>
                     Cargando usuarios...
                 </p>
-
             </main>
-
         );
-
     }
 
-
-    // ==========================================
-    // RENDER
-    // ==========================================
-
     return (
-
         <main className="
             min-h-screen
             bg-white
             pt-25
         ">
-
-
-            {/* MENSAJE DE ÉXITO */}
-
             {mensajeExito && (
-
                 <div className="
                     fixed
                     right-6
@@ -335,26 +209,17 @@ function Usuarios() {
                     text-white
                     shadow-lg
                 ">
-
                     ✓ {mensajeExito}
-
                 </div>
-
             )}
-
-
-            {/* HEADER */}
-
             <header className="
                 px-6
                 py-5
             ">
-
                 <div className="
                     mx-auto
                     max-w-7xl
                 ">
-
                     <h1 className="
                         text-3xl
                         font-semibold
@@ -362,8 +227,6 @@ function Usuarios() {
                     ">
                         Usuarios
                     </h1>
-
-
                     <p className="
                         my-1
                         text-base
@@ -372,8 +235,6 @@ function Usuarios() {
                     ">
                         Gestiona los usuarios del sistema.
                     </p>
-
-
                     <button
                         type="button"
                         onClick={abrirNuevoUsuario}
@@ -392,108 +253,74 @@ function Usuarios() {
                     >
                         Nuevo usuario
                     </button>
-
                 </div>
-
-
-                {/* TABLA */}
-
                 <div className="
                     mx-auto
                     max-w-7xl
                     pt-6
                 ">
-
                     <div className="
                         overflow-hidden
                         rounded-2xl
                         bg-white
                         shadow-sm
                     ">
-
                         <div className="overflow-x-auto">
-
                             <table className="
                                 w-full
                                 min-w-[800px]
                             ">
-
                                 <thead className="
                                     bg-[var(--color-naranja)]/80
                                     text-center
                                     text-stone-50
                                 ">
-
                                     <tr>
-
                                         <th className="table-header">
                                             Usuario
                                         </th>
-
                                         <th className="table-header">
                                             Nombre
                                         </th>
-
                                         <th className="table-header">
                                             Email
                                         </th>
-
                                         <th className="table-header">
                                             Rol
                                         </th>
-
                                         <th className="table-header">
                                             Estado
                                         </th>
-
                                         <th className="table-header">
                                             Acción
                                         </th>
-
                                     </tr>
-
                                 </thead>
-
-
                                 <tbody className="
                                     divide-y
                                     divide-black/10
                                 ">
-
                                     {usuarios.map((usuario) => (
-
                                         <tr
                                             key={usuario.id}
                                             className="
                                                 transition
                                                 hover:bg-slate-50
-                                            "
-                                        >
-
+                                        ">
                                             <td className="table-body">
                                                 {usuario.username}
                                             </td>
-
-
                                             <td className="table-body">
-
                                                 {usuario.first_name}
                                                 {" "}
                                                 {usuario.last_name}
-
                                             </td>
-
-
                                             <td className="table-body">
                                                 {usuario.email || "—"}
                                             </td>
-
-
                                             <td className="table-body">
-
                                                 {usuario.groups?.map(
                                                     (group) => (
-
                                                         <span
                                                             key={group}
                                                             className="
@@ -504,19 +331,13 @@ function Usuarios() {
                                                                 text-xs
                                                                 font-medium
                                                                 text-slate-700
-                                                            "
-                                                        >
+                                                        ">
                                                             {group}
                                                         </span>
-
                                                     )
                                                 )}
-
                                             </td>
-
-
                                             <td className="table-body">
-
                                                 <span
                                                     className={
                                                         usuario.is_active
@@ -540,18 +361,12 @@ function Usuarios() {
                                                             `
                                                     }
                                                 >
-
                                                     {usuario.is_active
                                                         ? "Activo"
                                                         : "Inactivo"}
-
                                                 </span>
-
                                             </td>
-
-
                                             <td className="table-body">
-
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -572,38 +387,20 @@ function Usuarios() {
                                                         text-slate-100
                                                         transition
                                                         hover:bg-slate-900
-                                                    "
-                                                >
-
+                                                ">
                                                     <CiEdit className="size-4" />
-
                                                     Editar
-
                                                 </button>
-
                                             </td>
-
                                         </tr>
-
                                     ))}
-
                                 </tbody>
-
                             </table>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </header>
-
-
-            {/* MODAL EDITAR */}
-
             {usuarioEditar && (
-
                 <UsuarioForm
                     formulario={formulario}
                     setFormulario={setFormulario}
@@ -612,14 +409,8 @@ function Usuarios() {
                     guardando={guardando}
                     modo="editar"
                 />
-
             )}
-
-
-            {/* MODAL NUEVO USUARIO */}
-
             {mostrarNuevoUsuario && (
-
                 <UsuarioForm
                     formulario={formulario}
                     setFormulario={setFormulario}
@@ -628,13 +419,8 @@ function Usuarios() {
                     guardando={guardando}
                     modo="crear"
                 />
-
             )}
-
         </main>
-
     );
-
 }
-
 export default Usuarios;

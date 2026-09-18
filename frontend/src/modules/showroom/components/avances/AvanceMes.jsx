@@ -2,17 +2,13 @@ function AvanceMes({ avance }) {
     
     return (
         <article className="pt-3">
-
-            {/* INFORMACIÓN */}
             <div
                 className="
                     grid
                     gap-5
                     md:grid-cols-[220px_1fr]
                     md:gap-8
-                "
-            >
-
+            ">
                 <div>
                     <span
                         className="
@@ -20,18 +16,15 @@ function AvanceMes({ avance }) {
                             uppercase
                             tracking-[0.25em]
                             text-gray-500
-                        "
-                    >
+                    ">
                         {avance.nombreMes} {avance.anio}
                     </span>
-
                     <h2
                         className="
                             text-3xl
                             font-semibold
                             md:text-4xl
-                        "
-                    >
+                    ">
                         {avance.porcentaje}%
                     </h2>
                     <span
@@ -40,12 +33,10 @@ function AvanceMes({ avance }) {
                             uppercase
                             tracking-wider
                             text-gray-500
-                        "
-                    >
+                    ">
                         avance de obra
                     </span>
                 </div>
-
                 <div className="flex h-full flex-col justify-end">
                     <p
                         className="
@@ -54,15 +45,11 @@ function AvanceMes({ avance }) {
                             leading-relaxed
                             text-gray-600
                             md:text-base
-                        "
-                    >
+                    ">
                         {avance.descripcion}
                     </p>
                 </div>
-
             </div>
-
-            {/* IMÁGENES */}
             <div
                 className="
                     mt-8
@@ -71,8 +58,7 @@ function AvanceMes({ avance }) {
                     gap-3
                     sm:grid-cols-2
                     lg:grid-cols-3
-                "
-            >
+            ">
             {avance.imagenes.map((imagen, index) => (
                 <div
                     key={imagen.id}
@@ -83,8 +69,7 @@ function AvanceMes({ avance }) {
                         overflow-hidden
                         rounded-xl
                         bg-gray-100
-                    "
-                >
+                ">
                     <img
                         src={imagen.imagen}
                         alt={`Avance de obra ${avance.nombreMes} ${index + 1}`}
@@ -100,7 +85,6 @@ function AvanceMes({ avance }) {
                 </div>
             ))}
             </div>
-
         </article>
     );
 }

@@ -43,8 +43,7 @@ function AdminNavbar({ proyecto }) {
                 z-60
                 w-full
                 bg-black
-            "
-        >
+        ">
             <div
                 className="
                     mx-auto
@@ -56,9 +55,7 @@ function AdminNavbar({ proyecto }) {
                     py-3
                     md:px-6
                     md:py-4
-                "
-            >
-                {/* LOGO */}
+            ">
                 {proyecto?.empresa?.logo1 && (
                     <img
                         src={proyecto.empresa.logo1}
@@ -66,8 +63,6 @@ function AdminNavbar({ proyecto }) {
                         className="h-9 w-auto md:h-10"
                     />
                 )}
-
-                {/* BOTÓN MENÚ MOBILE */}
                 <button
                     onClick={() => setMenuOpen(!menuOpen)}
                     className="
@@ -87,8 +82,6 @@ function AdminNavbar({ proyecto }) {
                         <HiMenu className="size-7" />
                     )}
                 </button>
-
-                {/* MENÚ DESKTOP */}
                 <nav
                     className="
                         hidden
@@ -97,12 +90,10 @@ function AdminNavbar({ proyecto }) {
                         text-sm
                         text-slate-200
                         md:flex
-                    "
-                >
+                ">
                     <Link to="/admin" className="menu-link">
                         Unidades
                     </Link>
-
                     {usuario?.groups?.includes("ADMINISTRADOR") && (
                         <>
                             <Link
@@ -155,10 +146,8 @@ function AdminNavbar({ proyecto }) {
                         pb-5
                         pt-3
                         md:hidden
-                    "
-                >
+                ">
                     <div className="flex flex-col gap-2">
-
                         <Link
                             to="/admin"
                             onClick={cerrarMenu}
@@ -169,8 +158,7 @@ function AdminNavbar({ proyecto }) {
                                 text-slate-200
                                 transition
                                 hover:bg-white/10
-                            "
-                        >
+                        ">
                             Unidades
                         </Link>
 
@@ -186,11 +174,9 @@ function AdminNavbar({ proyecto }) {
                                         text-slate-200
                                         transition
                                         hover:bg-white/10
-                                    "
-                                >
+                                ">
                                     Historial
                                 </Link>
-
                                 <Link
                                     to="/admin/usuarios"
                                     onClick={cerrarMenu}
@@ -201,22 +187,18 @@ function AdminNavbar({ proyecto }) {
                                         text-slate-200
                                         transition
                                         hover:bg-white/10
-                                    "
-                                >
+                                ">
                                     Usuarios
                                 </Link>
                             </>
                         )}
-
                         <div className="my-2 h-px bg-white/10" />
-
                         {usuario && (
                             <div className="flex items-center gap-2 px-3 py-3 text-gray-200">
                                 <FaUserAlt className="size-4" />
                                 <span>{usuario.username}</span>
                             </div>
                         )}
-
                         <button
                             onClick={cerrarSesion}
                             className="
@@ -228,8 +210,7 @@ function AdminNavbar({ proyecto }) {
                                 transition
                                 hover:bg-red-600
                                 hover:text-white
-                            "
-                        >
+                        ">
                             Cerrar sesión
                         </button>
                     </div>

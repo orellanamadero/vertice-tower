@@ -3,11 +3,8 @@ import { MdKeyboardArrowLeft } from "react-icons/md";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
 function AmenityCard({ amenity, reverse = false }) {
-
     const [currentImage, setCurrentImage] = useState(0);
-
     const images = amenity.imagenes.map((imagen) => imagen.imagen);
-
     const nextImage = () => {
         setCurrentImage((prev) =>
             prev === images.length - 1
@@ -15,7 +12,6 @@ function AmenityCard({ amenity, reverse = false }) {
                 : prev + 1
         );
     };
-
     const previousImage = () => {
         setCurrentImage((prev) =>
             prev === 0
@@ -40,9 +36,6 @@ function AmenityCard({ amenity, reverse = false }) {
                 ${reverse ? "md:flex-row-reverse" : "md:flex-row"}
             `}
         >
-
-            {/* INFORMACIÓN */}
-
             <div
                 className="
                     relative
@@ -60,9 +53,7 @@ function AmenityCard({ amenity, reverse = false }) {
                     md:rounded-[3rem]
                     md:px-10
                     lg:px-14
-                "
-            >
-
+            ">
                 <h2
                     className="
                         text-2xl
@@ -71,11 +62,9 @@ function AmenityCard({ amenity, reverse = false }) {
                         tracking-wide
                         md:text-4xl
                         lg:text-5xl
-                    "
-                >
+                ">
                     {amenity.nombreAmenidad}
                 </h2>
-
                 <p
                     className="
                         mx-auto
@@ -85,16 +74,10 @@ function AmenityCard({ amenity, reverse = false }) {
                         leading-relaxed
                         text-slate-500
                         md:text-base
-                    "
-                >
+                ">
                     "{amenity.descripcionAmenidad}"
                 </p>
-
             </div>
-
-
-            {/* IMAGEN / CARRUSEL */}
-
             <div
                 className={`
                     relative
@@ -109,7 +92,6 @@ function AmenityCard({ amenity, reverse = false }) {
                     ${reverse ? "md:-ml-8" : "md:-mr-8"}
                 `}
             >
-
                 <img
                     src={images[currentImage]}
                     alt={`${amenity.nombreAmenidad} - vista ${currentImage + 1}`}
@@ -122,10 +104,6 @@ function AmenityCard({ amenity, reverse = false }) {
                         hover:scale-105
                     "
                 />
-
-
-                {/* FLECHA ANTERIOR */}
-
                 {images.length > 1 && (
                     <button
                         type="button"
@@ -156,9 +134,6 @@ function AmenityCard({ amenity, reverse = false }) {
                     </button>
                 )}
 
-
-                {/* FLECHA SIGUIENTE */}
-
                 {images.length > 1 && (
                     <button
                         type="button"
@@ -183,15 +158,10 @@ function AmenityCard({ amenity, reverse = false }) {
                             duration-300
                             hover:bg-black/60
                             md:right-6
-                        "
-                    >
+                    ">
                         <MdKeyboardArrowRight />
                     </button>
                 )}
-
-
-                {/* INDICADORES */}
-
                 {images.length > 1 && (
                     <div
                         className="
@@ -201,8 +171,7 @@ function AmenityCard({ amenity, reverse = false }) {
                             flex
                             -translate-x-1/2
                             gap-2
-                        "
-                    >
+                    ">
                         {images.map((_, index) => (
                             <button
                                 key={index}
@@ -224,9 +193,7 @@ function AmenityCard({ amenity, reverse = false }) {
                         ))}
                     </div>
                 )}
-
             </div>
-
         </article>
     );
 }

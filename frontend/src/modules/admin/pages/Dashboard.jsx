@@ -45,33 +45,27 @@ function Dashboard() {
             const response = await apiFetch(
                 "/proyectos/unidades/"
             );
-
             if (!response.ok) {
                 throw new Error("No se pudieron cargar las unidades");
             }
 
             const data = await response.json();
-
             const unidadesVenta = data.filter(
                 unidad =>
                     unidad.tipoUnidad?.categoriaNombre !== "AREA COMUN"
             );
-
             setUnidades(unidadesVenta);
-
         } catch (error) {
             console.error(error);
         } finally {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         cargarUnidades();
         cargarTiposVenta();
     }, []);
     const esAdministrador = usuario?.groups?.includes("ADMINISTRADOR");
-
     const editarUnidad = async () => {
         if (!unidadSeleccionada) {
             console.log("No hay unidad seleccionada");
@@ -79,7 +73,6 @@ function Dashboard() {
         }
         const estadoAnterior = Number(unidadSeleccionada.estado);
         const estadoNuevo = Number(formulario.estado);
-
           if (
             [2, 3].includes(estadoNuevo) &&
             estadoAnterior !== estadoNuevo &&
@@ -90,10 +83,8 @@ function Dashboard() {
                     ? "Debe subir un documento de respaldo para vender la unidad."
                     : "Debe subir un documento de respaldo para reservar la unidad."
             );
-
             return;
         }
-
         if (
             estadoNuevo === 2 &&
             !formulario.tipoVenta
@@ -137,7 +128,6 @@ function Dashboard() {
                     formulario.tipoVenta
                 );
             }
-
             if (formulario.documentoVenta) {
                 formData.append(
                     "documentoVenta",
@@ -206,20 +196,16 @@ function Dashboard() {
             return coincideEstado && coincidePiso;
         });
     }, [unidades, filtroEstado, filtroPiso]);
-
     const total = unidades.length;
-
     const disponibles = unidades.filter(
         (unidad) => unidad.estado === 1
     ).length;
-
     const vendidas = unidades.filter(
         (unidad) => unidad.estado === 2
     ).length;
     const reservadas = unidades.filter(
         (unidad) => unidad.estado === 3
     ).length;
-
     const resumen = [
         {
             label: "Total",
@@ -249,7 +235,6 @@ function Dashboard() {
             </main>
         );
     }
-    
     return (
         <main className="min-h-screen bg-white pt-25">
             <header className="
@@ -284,8 +269,6 @@ function Dashboard() {
                 max-w-7xl
                 p-6
             ">
-                {/* RESUMEN */}
-
                 <div className="
                     grid
                     gap-4
@@ -299,8 +282,7 @@ function Dashboard() {
                                 bg-stone-50
                                 p-5
                                 shadow-md
-                            "
-                        >
+                        ">
                             <span className="
                                 text-sm
                                 uppercase
@@ -309,7 +291,6 @@ function Dashboard() {
                             ">
                                 {item.label}
                             </span>
-
                             <p
                                 className={`
                                     mt-2
@@ -324,7 +305,6 @@ function Dashboard() {
                         </div>
                     ))}
                 </div>
-
                 <div className="
                     mt-8
                     flex
@@ -336,7 +316,6 @@ function Dashboard() {
                     shadow-sm
                     md:flex-row
                 ">
-
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-600">
                             Estado
@@ -360,8 +339,7 @@ function Dashboard() {
                                     outline-none
                                     transition
                                     focus:border-[var(--color-naranja)]
-                                "
-                            >
+                            ">
                                 <option value="todos">
                                     Todos
                                 </option>
@@ -384,12 +362,9 @@ function Dashboard() {
                                 top-1/2
                                 -translate-y-1/2
                                 text-gray-500
-                            ">
-                                ▼
-                            </span>
+                            "> ▼ </span>
                         </div>
                     </div>
-
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-600">
                             Piso
@@ -413,12 +388,10 @@ function Dashboard() {
                                         outline-none
                                         transition
                                         focus:border-[var(--color-naranja)]
-                                "
-                            >
+                            ">
                                 <option value="todos">
                                     Todos los pisos
                                 </option>
-
                                 {[...pisos]
                                 .sort((a, b) => a - b)
                                 .map((piso) => (
@@ -437,9 +410,7 @@ function Dashboard() {
                                 top-1/2
                                 -translate-y-1/2
                                 text-gray-500
-                            ">
-                                ▼
-                            </span>
+                            "> ▼ </span>
                         </div>
                         <span className="
                                 pointer-events-none
@@ -448,13 +419,9 @@ function Dashboard() {
                                 top-1/2
                                 -translate-y-1/2
                                 text-gray-500
-                            ">
-                                ▼
-                        </span>
+                            "> ▼ </span>
                     </div>
-
                 </div>
-
                 <div className="
                     overflow-hidden mt-10
                 ">
@@ -500,11 +467,9 @@ function Dashboard() {
                                         <td className="table-body">
                                             {unidad.numeroPiso}
                                         </td>
-
                                         <td className="table-body">
                                             {unidad.tipoUnidad.nombre}
                                         </td>
-
                                         <td className="table-body">
                                             {unidad.tipoUnidad.tipo}
                                         </td>
@@ -540,7 +505,6 @@ function Dashboard() {
                                                         : "Reservado"
                                                 }
                                             </span>
-
                                         </td>
                                         <td className="table-body">
                                             <div className="
@@ -551,7 +515,6 @@ function Dashboard() {
                                                 <button
                                                     onClick={() => {
                                                         setUnidadSeleccionada(unidad);
-
                                                         setFormulario({
                                                             precio: unidad.precio ?? "",
                                                             moneda: unidad.moneda ?? 1,
@@ -559,7 +522,6 @@ function Dashboard() {
                                                             tipoVenta: unidad.tipoVenta ?? "",
                                                             documentoVenta: null,
                                                         });
-
                                                         setModal("editar");
                                                     }}
                                                     className="flex items-center gap-2 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
@@ -568,21 +530,13 @@ function Dashboard() {
                                                     Editar unidad
                                                 </button>
                                             </div>
-
                                         </td>
-
                                     </tr>
-
                                 ))}
-
                             </tbody>
-
                         </table>
-
                     </div>
-
                 </div>
-
             </div>
             {modal === "editar" && unidadSeleccionada && (
                 <div className="
@@ -606,7 +560,6 @@ function Dashboard() {
                         p-6
                         shadow-2xl
                     ">
-
                         <h2 className="text-xl font-semibold">
                             Editar unidad
                         </h2>
@@ -615,9 +568,7 @@ function Dashboard() {
                             {" · "}
                             Piso {unidadSeleccionada.numeroPiso}
                         </p>
-
                         <div className="mt-6">
-
                             <label className="
                                 mb-2
                                 block
@@ -628,9 +579,7 @@ function Dashboard() {
                             ">
                                 Precio
                             </label>
-
                             {usuario?.groups?.includes("ADMINISTRADOR") ? (
-
                                 <div className="
                                     flex
                                     items-center
@@ -640,14 +589,12 @@ function Dashboard() {
                                     bg-zinc-50
                                     px-4
                                 ">
-
                                     <span className="text-sm text-gray-400">
                                         {formulario.moneda === 1
                                             ? "$US"
                                             : "BOB"
                                         }
                                     </span>
-
                                     <input
                                         type="number"
                                         min="0"
@@ -667,11 +614,8 @@ function Dashboard() {
                                             outline-none
                                         "
                                     />
-
                                 </div>
-
                             ) : (
-
                                 <div className="
                                     rounded-xl
                                     border
@@ -687,14 +631,11 @@ function Dashboard() {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,
                                     })}
-
                                     {" "}
-
                                     {formulario.moneda === 1
                                         ? "$US"
                                         : "BOB"
                                     }
-
                                     <span className="
                                         ml-2
                                         text-xs
@@ -703,11 +644,8 @@ function Dashboard() {
                                         (Solo administrador)
                                     </span>
                                 </div>
-
                             )}
-
                         </div>
-
                         <div className="mt-4">
                             <label className="
                                 mb-2
@@ -719,9 +657,7 @@ function Dashboard() {
                             ">
                                 Moneda
                             </label>
-
                             {usuario?.groups?.includes("ADMINISTRADOR") ? (
-
                                 <select
                                     value={formulario.moneda}
                                     onChange={(event) =>
@@ -739,8 +675,7 @@ function Dashboard() {
                                         px-4
                                         py-3
                                         outline-none
-                                    "
-                                >
+                                ">
                                     <option value={1}>
                                         $US
                                     </option>
@@ -749,9 +684,7 @@ function Dashboard() {
                                         BOB
                                     </option>
                                 </select>
-
                             ) : (
-
                                 <div className="
                                     rounded-xl
                                     border
@@ -765,7 +698,6 @@ function Dashboard() {
                                         ? "$US"
                                         : "BOB"
                                     }
-
                                     <span className="
                                         ml-2
                                         text-xs
@@ -774,11 +706,8 @@ function Dashboard() {
                                         (Solo administrador)
                                     </span>
                                 </div>
-
                             )}
-
                         </div>
-
                         <div className="mt-4">
                             <label className="
                                 mb-2
@@ -794,7 +723,6 @@ function Dashboard() {
                                 value={formulario.estado}
                                 onChange={(event) => {
                                     const nuevoEstado = Number(event.target.value);
-
                                     setFormulario(prev => ({
                                         ...prev,
                                         estado: nuevoEstado,
@@ -813,8 +741,7 @@ function Dashboard() {
                                     px-4
                                     py-3
                                     outline-none
-                                "
-                            >
+                            ">
                                 <option value={1}>
                                     Disponible
                                 </option>
@@ -825,9 +752,7 @@ function Dashboard() {
                                     Reservado
                                 </option>
                             </select>
-
                         </div>
-
                         {[2, 3].includes(Number(formulario.estado)) && (
                             <div className="mt-4">
                                 <label className="
@@ -840,7 +765,6 @@ function Dashboard() {
                                 ">
                                     Tipo de venta
                                 </label>
-
                                 <select
                                     value={formulario.tipoVenta}
                                     onChange={(event) =>
@@ -860,12 +784,10 @@ function Dashboard() {
                                         px-4
                                         py-3
                                         outline-none
-                                    "
-                                >
+                                ">
                                     <option value="">
                                         Seleccionar tipo de venta
                                     </option>
-
                                     {tiposVenta.map((tipo) => (
                                         <option
                                             key={tipo.id}
@@ -875,15 +797,10 @@ function Dashboard() {
                                         </option>
                                     ))}
                                 </select>
-
                             </div>
-
                         )}
-
                         {[2, 3].includes(Number(formulario.estado)) && (
-
                             <div className="mt-4">
-
                                 <label className="
                                     mb-2
                                     block
@@ -894,7 +811,6 @@ function Dashboard() {
                                 ">
                                     Documento de respaldo
                                 </label>
-
                                 <input
                                     type="file"
                                     accept="application/pdf"
@@ -931,7 +847,6 @@ function Dashboard() {
                                         ">
                                             Documento actual
                                         </p>
-
                                         <p className="
                                             mt-1
                                             truncate
@@ -944,7 +859,6 @@ function Dashboard() {
                                                 .pop()
                                             }
                                         </p>
-
                                         <a
                                             href={unidadSeleccionada.documentoVenta}
                                             target="_blank"
@@ -957,31 +871,23 @@ function Dashboard() {
                                                 text-blue-600
                                                 hover:text-blue-800
                                                 hover:underline
-                                            "
-                                        >
+                                        ">
                                             Ver documento
                                         </a>
                                     </div>
                                 )}
                             </div>
-
                         )}
-
-
-                        {/* BOTONES */}
-
                         <div className="
                             mt-6
                             flex
                             justify-end
                             gap-3
                         ">
-
                             <button
                                 onClick={() => {
                                     setModal(null);
                                     setUnidadSeleccionada(null);
-
                                     setFormulario({
                                         precio: "",
                                         moneda: 1,
@@ -997,11 +903,9 @@ function Dashboard() {
                                     py-2
                                     text-sm
                                     hover:bg-gray-200
-                                "
-                            >
+                            ">
                                 Cancelar
                             </button>
-
                             <button
                                 onClick={editarUnidad}
                                 className="
@@ -1013,18 +917,14 @@ function Dashboard() {
                                     font-medium
                                     text-white
                                     hover:bg-green-700
-                                "
-                            >
+                            ">
                                 Guardar cambios
                             </button>
-
                         </div>
-
                     </div>
                 </div>
             )}
         </main>
     );
 }
-
 export default Dashboard;

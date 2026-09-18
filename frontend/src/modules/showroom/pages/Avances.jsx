@@ -54,13 +54,8 @@ function Avances() {
                         title="Avances de obra"
                         subtitle="Así crece nuestro proyecto"
                     />
-
-                    {/* AVANCES */}
-
                     <div className="mt-12 space-y-16 md:space-y-20">
-
                         {avances.map((avance) => (
-
                             <AvanceMes
                                 key={`${avance.mes}-${avance.anio}`}
                                 avance={avance}

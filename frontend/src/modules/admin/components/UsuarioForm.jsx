@@ -8,28 +8,22 @@ function UsuarioForm({
     guardando,
     modo = "editar",
 }) {
-
     const handleChange = (event) => {
-
         const {
             name,
             value,
             type,
             checked
         } = event.target;
-
         setFormulario((prev) => ({
             ...prev,
             [name]: type === "checkbox"
                 ? checked
                 : value,
         }));
-
     };
 
-
     return (
-
         <div className="
             fixed
             inset-0
@@ -41,7 +35,6 @@ function UsuarioForm({
             px-4
             backdrop-blur-sm
         ">
-
             <div className="
                 w-full
                 max-w-lg
@@ -49,9 +42,6 @@ function UsuarioForm({
                 bg-white
                 shadow-2xl
             ">
-
-                {/* HEADER */}
-
                 <div className="
                     flex
                     items-center
@@ -61,9 +51,7 @@ function UsuarioForm({
                     px-6
                     py-5
                 ">
-
                     <div>
-
                         <h2 className="
                             text-xl
                             font-semibold
@@ -72,7 +60,6 @@ function UsuarioForm({
                                 ? "Nuevo usuario"
                                 : "Editar usuario"}
                         </h2>
-
                         <p className="
                             mt-1
                             text-sm
@@ -82,10 +69,7 @@ function UsuarioForm({
                                 ? "Registra un nuevo usuario en el sistema."
                                 : "Modifica los datos del usuario."}
                         </p>
-
                     </div>
-
-
                     <button
                         type="button"
                         onClick={onCancel}
@@ -97,34 +81,20 @@ function UsuarioForm({
                             transition
                             hover:bg-gray-100
                             hover:text-gray-900
-                        "
-                    >
-
+                    ">
                         <IoClose className="size-6" />
-
                     </button>
-
                 </div>
-
-
-                {/* FORMULARIO */}
-
                 <form
                     onSubmit={onSubmit}
                     className="px-6 py-6"
                 >
-
                     <div className="
                         grid
                         gap-4
                         sm:grid-cols-2
                     ">
-
-
-                        {/* USUARIO */}
-
                         <div className="sm:col-span-2">
-
                             <label className="
                                 mb-1.5
                                 block
@@ -134,7 +104,6 @@ function UsuarioForm({
                             ">
                                 Usuario
                             </label>
-
                             <input
                                 type="text"
                                 name="username"
@@ -155,14 +124,8 @@ function UsuarioForm({
                                     focus:border-slate-900
                                 "
                             />
-
                         </div>
-
-
-                        {/* NOMBRE */}
-
                         <div>
-
                             <label className="
                                 mb-1.5
                                 block
@@ -172,7 +135,6 @@ function UsuarioForm({
                             ">
                                 Nombre
                             </label>
-
                             <input
                                 type="text"
                                 name="first_name"
@@ -192,14 +154,8 @@ function UsuarioForm({
                                     focus:border-slate-900
                                 "
                             />
-
                         </div>
-
-
-                        {/* APELLIDO */}
-
                         <div>
-
                             <label className="
                                 mb-1.5
                                 block
@@ -209,7 +165,6 @@ function UsuarioForm({
                             ">
                                 Apellido
                             </label>
-
                             <input
                                 type="text"
                                 name="last_name"
@@ -229,14 +184,8 @@ function UsuarioForm({
                                     focus:border-slate-900
                                 "
                             />
-
                         </div>
-
-
-                        {/* EMAIL */}
-
                         <div className="sm:col-span-2">
-
                             <label className="
                                 mb-1.5
                                 block
@@ -265,14 +214,8 @@ function UsuarioForm({
                                     focus:border-slate-900
                                 "
                             />
-
                         </div>
-
-
-                        {/* ROL */}
-
                         <div>
-
                             <label className="
                                 mb-1.5
                                 block
@@ -282,7 +225,6 @@ function UsuarioForm({
                             ">
                                 Rol
                             </label>
-
                             <select
                                 name="group"
                                 value={formulario.group}
@@ -300,30 +242,19 @@ function UsuarioForm({
                                     outline-none
                                     transition
                                     focus:border-slate-900
-                                "
-                            >
-
+                            ">
                                 <option value="">
                                     Selecciona un rol
                                 </option>
-
                                 <option value="ADMINISTRADOR">
                                     Administrador
                                 </option>
-
                                 <option value="ASESOR">
                                     Asesor
                                 </option>
-
                             </select>
-
                         </div>
-
-
-                        {/* ESTADO */}
-
                         <div>
-
                             <label className="
                                 mb-1.5
                                 block
@@ -345,7 +276,6 @@ function UsuarioForm({
                                 border-gray-300
                                 px-3
                             ">
-
                                 <input
                                     type="checkbox"
                                     name="is_active"
@@ -353,20 +283,12 @@ function UsuarioForm({
                                     onChange={handleChange}
                                     className="size-4"
                                 />
-
                                 <span className="text-sm">
                                     Usuario activo
                                 </span>
-
                             </label>
-
                         </div>
-
-
-                        {/* CONTRASEÑA */}
-
                         <div className="sm:col-span-2">
-
                             <label className="
                                 mb-1.5
                                 block
@@ -378,7 +300,6 @@ function UsuarioForm({
                                     ? "Contraseña"
                                     : "Nueva contraseña"}
                             </label>
-
                             <input
                                 type="password"
                                 name="password"
@@ -404,21 +325,14 @@ function UsuarioForm({
                                     focus:border-slate-900
                                 "
                             />
-
                         </div>
-
                     </div>
-
-
-                    {/* BOTONES */}
-
                     <div className="
                         mt-6
                         flex
                         justify-end
                         gap-3
                     ">
-
                         <button
                             type="button"
                             onClick={onCancel}
@@ -434,12 +348,9 @@ function UsuarioForm({
                                 text-gray-700
                                 transition
                                 hover:bg-gray-100
-                            "
-                        >
+                        ">
                             Cancelar
                         </button>
-
-
                         <button
                             type="submit"
                             disabled={guardando}
@@ -455,9 +366,7 @@ function UsuarioForm({
                                 hover:bg-slate-700
                                 disabled:cursor-not-allowed
                                 disabled:opacity-50
-                            "
-                        >
-
+                        ">
                             {guardando
                                 ? modo === "crear"
                                     ? "Creando..."
@@ -465,15 +374,10 @@ function UsuarioForm({
                                 : modo === "crear"
                                     ? "Crear usuario"
                                     : "Guardar cambios"}
-
                         </button>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
     );
 }

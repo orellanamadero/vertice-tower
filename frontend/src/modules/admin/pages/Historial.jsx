@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../services/api";
-
 function Historial() {
     const [historial, setHistorial] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sinPermiso, setSinPermiso] = useState(false);
-
     const [filtroPiso, setFiltroPiso] = useState("todos");
     const [filtroTipo, setFiltroTipo] = useState("todos");
-
     const historialFiltrado = historial.filter((registro) => {
         const coincidePiso =
             filtroPiso === "todos" ||
@@ -34,41 +31,32 @@ function Historial() {
                 setSinPermiso(true);
                 return;
             }
-
             if (!response.ok) {
                 throw new Error(
                     "No se pudo cargar el historial"
                 );
             }
-
             const data = await response.json();
             setHistorial(data);
-
         } catch (error) {
             console.error(error);
         } finally {
             setLoading(false);
         }
     };
-
     useEffect(() => {
         cargarHistorial();
     }, []);
-
     const getDocumentoUrl = (documento) => {
         if (!documento) return "";
-
         const backendUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
-
         const pathname = documento.startsWith("http")
             ? new URL(documento).pathname
             : documento.startsWith("/")
                 ? documento
                 : `/${documento}`;
-
         return `${backendUrl}${pathname}`;
     };
-
     if (sinPermiso) {
         return (
             <main className="

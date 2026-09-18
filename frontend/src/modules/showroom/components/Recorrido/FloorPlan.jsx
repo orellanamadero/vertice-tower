@@ -54,7 +54,6 @@ function FloorPlan({ project, floor }) {
                                 : "1 / 1",
                     }}
                 >
-
                     <img
                         src={floorImage}
                         alt={`Plano del piso ${floor.numero}`}
@@ -66,7 +65,6 @@ function FloorPlan({ project, floor }) {
                             max-w-none
                         "
                     />
-
                     {imageSize.width > 0 && (
                         <UnidadMap
                             project={project}
@@ -74,14 +72,9 @@ function FloorPlan({ project, floor }) {
                             size={imageSize}
                         />
                     )}
-
                 </div>
-
             </div>
-
         </div>
-
     );
 }
-
 export default FloorPlan;

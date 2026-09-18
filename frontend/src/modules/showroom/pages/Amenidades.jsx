@@ -63,14 +63,10 @@ function Amenidades() {
 
     return (
         <main className="relative h-screen w-full overflow-hidden bg-black">
-
-            {/* RECORRIDO 360 */}
             <Recorrido360
                 src={selectedAmenidad.tipoUnidad.tour360}
                 title={selectedAmenidad.tipoUnidad.nombre}
             />
-
-            {/* BOTONES DE AMENIDADES */}
             <div
                 className="
                     absolute
@@ -91,7 +87,6 @@ function Amenidades() {
                 {amenidades.map((amenidad) => {
                     const isSelected =
                         selectedAmenidad.id === amenidad.id;
-
                     return (
                         <button
                             key={amenidad.id}

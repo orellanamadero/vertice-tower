@@ -15,11 +15,7 @@ function TitleCard ({
                 rounded-2xl
                 shadow-xl
                 md:mt-10
-            "
-        >
-
-            {/* IMAGEN */}
-
+        ">
             <img
                 src={image}
                 alt={title}
@@ -32,9 +28,6 @@ function TitleCard ({
                     hover:scale-105
                 "
             />
-
-            {/* OVERLAY */}
-
             <div
                 className="
                     absolute
@@ -42,9 +35,6 @@ function TitleCard ({
                     bg-black/35
                 "
             />
-
-            {/* CONTENIDO */}
-
             <div
                 className="
                     absolute
@@ -52,9 +42,7 @@ function TitleCard ({
                     top-0
                     p-6
                     md:p-10
-                "
-            >
-
+            ">
                 {label && (
                     <span
                         className="
@@ -62,12 +50,10 @@ function TitleCard ({
                             uppercase
                             tracking-[0.3em]
                             text-white
-                        "
-                    >
+                    ">
                         {label}
                     </span>
                 )}
-
                 <h1
                     className="
                         mt-3
@@ -77,10 +63,8 @@ function TitleCard ({
                         leading-tight
                         text-white
                         md:text-5xl
-                    "
-                >
+                ">
                     {title}
-
                     {highlight && (
                         <span
                             className="
@@ -91,11 +75,8 @@ function TitleCard ({
                             {highlight}
                         </span>
                     )}
-
                 </h1>
-
             </div>
-
         </section>
     );
 }

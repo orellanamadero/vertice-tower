@@ -52,40 +52,33 @@ function HeroBackground({
                 resolve();
                 return;
             }
-
             const handleCanPlay = () => {
                 cleanup();
                 resolve();
             };
-
             const handleError = () => {
                 cleanup();
-
                 reject(
                     new Error(
                         "No se pudo preparar el siguiente video"
                     )
                 );
             };
-
             const cleanup = () => {
                 video.removeEventListener(
                     "canplay",
                     handleCanPlay
                 );
-
                 video.removeEventListener(
                     "error",
                     handleError
                 );
             };
-
             video.addEventListener(
                 "canplay",
                 handleCanPlay,
                 { once: true }
             );
-
             video.addEventListener(
                 "error",
                 handleError,
@@ -97,23 +90,18 @@ function HeroBackground({
     useEffect(() => {
         const videoA = videoARef.current;
         const videoB = videoBRef.current;
-
         if (!videoA || !videoB || !desktopVideo) {
             return;
         }
-
         if (!initializedRef.current) {
             initializedRef.current = true;
-
             setVideoSource(
                 videoA,
                 desktopVideo,
                 currentPoster
             );
-
             videoA.muted = muted;
             videoA.loop = loop;
-
             const preloadNextVideo = () => {
                 if (!nextVideo) return;
 
@@ -122,18 +110,15 @@ function HeroBackground({
                     nextVideo,
                     nextPoster
                 );
-
                 videoB.muted = true;
                 videoB.loop = false;
                 videoB.preload = "auto";
             };
-
             videoA.addEventListener(
                 "playing",
                 preloadNextVideo,
                 { once: true }
             );
-
             videoA
                 .play()
                 .catch((error) => {
@@ -142,7 +127,6 @@ function HeroBackground({
                         error
                     );
                 });
-
             return () => {
                 videoA.removeEventListener(
                     "playing",
@@ -150,27 +134,22 @@ function HeroBackground({
                 );
             };
         }
-
         const outgoingVideo =
             activeSlotRef.current === "A"
                 ? videoA
                 : videoB;
-
         const incomingVideo =
             activeSlotRef.current === "A"
                 ? videoB
                 : videoA;
-
         if (
             outgoingVideo.dataset.source ===
             desktopVideo
         ) {
             outgoingVideo.muted = muted;
             outgoingVideo.loop = loop;
-
             return;
         }
-
         let cancelled = false;
 
         const startTransition = async () => {
@@ -188,38 +167,28 @@ function HeroBackground({
                 await waitUntilCanPlay(
                     incomingVideo
                 );
-
                 if (cancelled) return;
-
                 await incomingVideo.play();
-
                 if (cancelled) return;
-
                 const newActiveSlot =
                     activeSlotRef.current === "A"
                         ? "B"
                         : "A";
-
                 activeSlotRef.current =
                     newActiveSlot;
-
                 setActiveSlot(
                     newActiveSlot
                 );
-
                 transitionTimeoutRef.current =
                     setTimeout(() => {
                         if (cancelled) return;
-
                         outgoingVideo.pause();
-
                         if (nextVideo) {
                             setVideoSource(
                                 outgoingVideo,
                                 nextVideo,
                                 nextPoster
                             );
-
                             outgoingVideo.muted = true;
                             outgoingVideo.loop = false;
                             outgoingVideo.preload =
@@ -228,14 +197,11 @@ function HeroBackground({
                             outgoingVideo.removeAttribute(
                                 "src"
                             );
-
                             outgoingVideo.removeAttribute(
                                 "poster"
                             );
-
                             delete outgoingVideo.dataset
                                 .source;
-
                             outgoingVideo.load();
                         }
                     }, TRANSITION_DURATION);
@@ -248,10 +214,8 @@ function HeroBackground({
         };
 
         startTransition();
-
         return () => {
             cancelled = true;
-
             if (
                 transitionTimeoutRef.current
             ) {
@@ -279,7 +243,6 @@ function HeroBackground({
                 bg-black
             "
         >
-            {/* VIDEO A */}
             <video
                 ref={videoARef}
                 playsInline
@@ -307,8 +270,6 @@ function HeroBackground({
                     }
                 `}
             />
-
-            {/* VIDEO B */}
             <video
                 ref={videoBRef}
                 playsInline

@@ -41,34 +41,25 @@ function UnidadMap({ floor, project, size }) {
             setPulseUnit(null);
             return;
         }
-
         let index = 0;
-
         setPulseUnit(
             availableUnits[0].id
         );
-
         const interval = setInterval(() => {
-
             index =
                 (index + 1) %
                 availableUnits.length;
-
             setPulseUnit(
                 availableUnits[index].id
             );
-
         }, 1500);
-
         return () => {
             clearInterval(interval);
         };
-
     }, [floor.id, units]);
 
     return (
         <div className="absolute inset-0">
-
             <svg
                 viewBox={`0 0 ${width} ${height}`}
                 preserveAspectRatio="none"
@@ -127,14 +118,11 @@ function UnidadMap({ floor, project, size }) {
                         />
                     );
                 })}
-
             </svg>
 
             {units.map((unit) => {
-
                 const tipoUnidad =
                     unit.tipoUnidad;
-
                 if (
                     !tipoUnidad ||
                     tipoUnidad.x == null ||

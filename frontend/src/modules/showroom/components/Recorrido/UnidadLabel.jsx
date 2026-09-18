@@ -12,7 +12,6 @@ function UnidadLabel({ unidad, width, height, onClick }) {
                 return "#94a3b8";
         }
     };
-
     const color = getUnitColor(unidad.estado);
 
     return (
@@ -50,7 +49,6 @@ function UnidadLabel({ unidad, width, height, onClick }) {
                     backgroundColor: color,
                 }}
             />
-
             <span>
                 {unidad.piso} - {unidad.codigo}
             </span>

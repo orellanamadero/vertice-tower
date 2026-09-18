@@ -107,8 +107,6 @@ function Contacto() {
             lg:scale-100
         "
     >
-
-        {/* Imagen */}
         <img
             src={contacto.imagecontacto}
             alt="Contacto"
@@ -147,9 +145,7 @@ function Contacto() {
                 </g>
             </a>
         </svg>
-
     </div>
-
 </main>
     );
 }

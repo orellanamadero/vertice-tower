@@ -2,7 +2,6 @@ import { HeroProject } from "../components/hero";
 import { useEffect, useState } from "react";
 import { getProyectoHero } from "../../../services/api";
 
-
 function HomeProject() {
 
     const [project, setProject] = useState(null);

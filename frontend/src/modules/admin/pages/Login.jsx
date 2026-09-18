@@ -6,14 +6,11 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function Login() {
     const navigate = useNavigate();
-
     const [form, setForm] = useState({
         username: "",
         password: "",
     });
-
     const [error, setError] = useState("");
-
     const handleChange = (event) => {
         setForm({
             ...form,
@@ -36,15 +33,12 @@ function Login() {
                     body: JSON.stringify(form),
                 }
             );
-
             if (!response.ok) {
                 throw new Error(
                     "Usuario o contraseña incorrectos"
                 );
             }
-
             const data = await response.json();
-
             localStorage.setItem("access", data.access);
             navigate("/admin");
         } catch (error) {
@@ -98,14 +92,10 @@ function Login() {
                         Ingresa con tu cuenta
                     </p>
                 </div>
-
                 <form
                     onSubmit={handleSubmit}
                     className="space-y-5"
                 >
-
-                    {/* USUARIO */}
-
                     <div>
                         <label className="
                             mb-2
@@ -138,9 +128,6 @@ function Login() {
                             "
                         />
                     </div>
-
-                    {/* CONTRASEÑA */}
-
                     <div>
                         <label className="
                             mb-2
@@ -173,9 +160,6 @@ function Login() {
                             "
                         />
                     </div>
-
-                    {/* ERROR */}
-
                     {error && (
                         <p className="
                             text-sm
@@ -184,7 +168,6 @@ function Login() {
                             {error}
                         </p>
                     )}
-
                     <button
                         type="submit"
                         className="
@@ -199,16 +182,12 @@ function Login() {
                             text-white
                             transition
                             hover:bg-slate-900
-                        "
-                    >
+                    ">
                         Iniciar sesión
                     </button>
-
                 </form>
-
             </div>
         </main>
     );
 }
-
 export default Login;

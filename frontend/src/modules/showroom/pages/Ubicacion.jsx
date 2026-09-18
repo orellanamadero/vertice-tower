@@ -7,34 +7,20 @@ function Ubicacion() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-
         async function cargarUbicacion() {
-
             try {
-
                 const data = await getUbicacion();
-
                 setUbicacion(data);
-
             } catch (error) {
-
                 console.error(error);
-
             } finally {
-
                 setLoading(false);
-
             }
-
         }
-
         cargarUbicacion();
-
     }, []);
 
-
     if (loading) {
-
         return (
             <main
                 className="
@@ -49,12 +35,9 @@ function Ubicacion() {
                 </p>
             </main>
         );
-
     }
 
-
     if (!ubicacion) {
-
         return (
             <main
                 className="
@@ -62,19 +45,15 @@ function Ubicacion() {
                     min-h-screen
                     items-center
                     justify-center
-                "
-            >
+            ">
                 <p>
                     No se pudo cargar la información de ubicación.
                 </p>
             </main>
         );
-
     }
 
-
     return (
-
         <main
             className="
                 relative
@@ -82,8 +61,7 @@ function Ubicacion() {
                 w-full
                 overflow-hidden
                 bg-white
-            "
-        >
+        ">
 
             <div
                 className="
@@ -103,18 +81,14 @@ function Ubicacion() {
                     `,
                 }}
             />
-
-
             <div
                 className="
                     absolute
                     inset-0
                     hidden
-
                     bg-cover
                     bg-center
                     bg-no-repeat
-
                     xl:block
                 "
                 style={{
@@ -158,13 +132,8 @@ function Ubicacion() {
                     referrerPolicy="no-referrer-when-downgrade"
                     title="Ubicación del proyecto"
                 />
-
             </section>
-
         </main>
-
     );
-
 }
-
 export default Ubicacion;

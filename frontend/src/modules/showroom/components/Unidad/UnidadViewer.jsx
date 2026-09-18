@@ -7,14 +7,10 @@ function UnidadViewer({ view, unit }) {
     const [galleryIndex, setGalleryIndex] = useState(0);
     const [previousIndex, setPreviousIndex] = useState(null);
     const [isFading, setIsFading] = useState(false);
-
     const gallery = unit?.tipoUnidad?.galeria || [];
-
     const changeGallery = (newIndex) => {
-
         setPreviousIndex(galleryIndex);
         setGalleryIndex(newIndex);
-
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 setIsFading(true);
@@ -24,18 +20,12 @@ function UnidadViewer({ view, unit }) {
     };
 
     return (
-
         <section
             className="
                 w-full
                 h-full
                 overflow-y-hidden
-            "
-        >
-            {/* =========================
-                RENDER 3D
-            ========================= */}
-
+        ">
             {view === "3d" && (
                 <div
                     className="
@@ -45,8 +35,7 @@ function UnidadViewer({ view, unit }) {
                         items-center
                         justify-center
                         overflow-hidden
-                    "
-                >
+                ">
                     <img
                         src={unit.tipoUnidad.render3D}
                         alt={`Render ${unit.tipoUnidad.codigo}`}
@@ -59,18 +48,9 @@ function UnidadViewer({ view, unit }) {
                             object-contain
                         "
                     />
-
                 </div>
-
             )}
-
-
-            {/* =========================
-                PLANO TÉCNICO
-            ========================= */}
-
             {view === "technical" && (
-
                 <div
                     className="
                         w-full
@@ -80,8 +60,7 @@ function UnidadViewer({ view, unit }) {
                         justify-center
                         overflow-hidden
                         bg-[#ffffff]
-                    "
-                >
+                ">
                     <img
                         src={unit.tipoUnidad.planoTecnico}
                         alt={`Plano técnico ${unit.tipoUnidad.codigo}`}
@@ -96,14 +75,7 @@ function UnidadViewer({ view, unit }) {
                     />
                 </div>
             )}
-
-
-            {/* =========================
-                GALERÍA
-            ========================= */}
-
             {view === "gallery" && gallery.length > 0 && (
-
                 <div
                     className="
                         relative
@@ -117,11 +89,7 @@ function UnidadViewer({ view, unit }) {
                         pt-5
                         pb-10
                         md:pt-15
-                    "
-                >
-
-                    {/* FONDO */}
-
+                ">
                     <img
                         src={gallery[galleryIndex].image}
                         alt=""
@@ -136,15 +104,12 @@ function UnidadViewer({ view, unit }) {
                             blur-md
                         "
                     />
-
                     <div
                         className="
                             absolute
                             inset-0
                             bg-black/25
-                        "
-                    >
-
+                    ">
                         <div
                             className="
                                 absolute
@@ -152,11 +117,7 @@ function UnidadViewer({ view, unit }) {
                                 w-full
                                 h-full
                                 shadow-[0_0_30px_rgba(0,0,0,0.90)]
-                            "
-                        >
-
-                            {/* IMAGEN NUEVA */}
-
+                        ">
                             <img
                                 src={gallery[galleryIndex].image}
                                 alt={`Galería ${unit.tipoUnidad.codigo}`}
@@ -175,12 +136,7 @@ function UnidadViewer({ view, unit }) {
                                     ease-in-out
                                 "
                             />
-
-
-                            {/* IMAGEN ANTERIOR */}
-
                             {previousIndex !== null && (
-
                                 <img
                                     src={
                                         gallery[previousIndex].image
@@ -196,11 +152,9 @@ function UnidadViewer({ view, unit }) {
                                         md:pb-21
                                         lg:pb-22
                                         object-contain
-
                                         transition-opacity
                                         duration-900
                                         ease-in-out
-
                                         ${
                                             isFading
                                                 ? "opacity-0"
@@ -208,20 +162,12 @@ function UnidadViewer({ view, unit }) {
                                         }
                                     `}
                                     onTransitionEnd={() => {
-
                                         setPreviousIndex(null);
                                         setIsFading(false);
-
                                     }}
                                 />
-
                             )}
-
                         </div>
-
-
-                        {/* ANTERIOR */}
-
                         <button
                             onClick={() =>
                                 changeGallery(
@@ -237,30 +183,19 @@ function UnidadViewer({ view, unit }) {
                                 top-1/2
                                 -translate-y-1/2
                                 z-20
-
                                 h-10
                                 w-10
                                 rounded-full
-
                                 flex
                                 items-center
                                 justify-center
-
                                 bg-slate-50
                                 text-slate-700
-
                                 hover:scale-110
                                 transition
-                            "
-                        >
-
+                        ">
                             <IoIosArrowBack size={20} />
-
                         </button>
-
-
-                        {/* SIGUIENTE */}
-
                         <button
                             onClick={() =>
                                 changeGallery(
@@ -276,30 +211,19 @@ function UnidadViewer({ view, unit }) {
                                 top-1/2
                                 -translate-y-1/2
                                 z-20
-
                                 h-10
                                 w-10
                                 rounded-full
-
                                 flex
                                 items-center
                                 justify-center
-
                                 bg-white/80
                                 text-slate-800
-
                                 hover:scale-110
                                 transition
-                            "
-                        >
-
+                        ">
                             <IoIosArrowForward size={20} />
-
                         </button>
-
-
-                        {/* CONTADOR */}
-
                         <div
                             className="
                                 absolute
@@ -308,20 +232,15 @@ function UnidadViewer({ view, unit }) {
                                 left-1/2
                                 -translate-x-1/2
                                 z-20
-
                                 flex
                                 items-center
                                 gap-1
-
                                 rounded-full
                                 bg-black/40
                                 px-2
                                 py-2
-                            "
-                        >
-
+                        ">
                             {gallery.map((image, index) => (
-
                                 <span
                                     key={image.id}
                                     className={`
@@ -330,7 +249,6 @@ function UnidadViewer({ view, unit }) {
                                         rounded-full
                                         transition-all
                                         duration-300
-
                                         ${
                                             galleryIndex === index
                                                 ? "bg-white scale-125"
@@ -338,33 +256,19 @@ function UnidadViewer({ view, unit }) {
                                         }
                                     `}
                                 />
-
                             ))}
-
                         </div>
-
                     </div>
-
                 </div>
-
             )}
-
-
-            {/* =========================
-                TOUR 360
-            ========================= */}
 
             {view === "tour" && (
                 <Recorrido360 
                     src={unit.tipoUnidad.tour360}
                     title="Recorrido 360°"
                 />
-        
         )}
         </section>
-
     );
-
 }
-
 export default UnidadViewer;
