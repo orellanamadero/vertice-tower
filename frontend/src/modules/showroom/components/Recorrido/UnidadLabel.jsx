@@ -4,10 +4,10 @@ function UnidadLabel({ unidad, width, height, onClick }) {
         switch (estado) {
             case 1:
                 return "var(--color-verde)";
-
             case 2:
                 return "var(--color-rojo)";
-
+            case 3:
+                return "var(--color-yellow)";
             default:
                 return "#94a3b8";
         }

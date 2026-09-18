@@ -21,13 +21,12 @@ let recorridoCache = null;
 let recorridoCacheTime = 0;
 let recorridoPromise = null;
 
-const RECORRIDO_CACHE_TTL = 60 * 1000; // 1 minuto
+const RECORRIDO_CACHE_TTL = 60 * 1000;
 
 export function getProyectoRecorridoCache() {
     if (!recorridoCache) {
         return null;
     }
-
     const cacheValida =
         Date.now() - recorridoCacheTime <
         RECORRIDO_CACHE_TTL;
@@ -37,6 +36,11 @@ export function getProyectoRecorridoCache() {
     }
 
     return recorridoCache;
+}
+export function invalidarProyectoRecorridoCache() {
+    recorridoCache = null;
+    recorridoCacheTime = 0;
+    recorridoPromise = null;
 }
 
 export async function getProyectoRecorrido() {

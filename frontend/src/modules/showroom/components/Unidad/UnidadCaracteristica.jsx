@@ -9,17 +9,13 @@ function UnidadCaracteristica({ icon, label, value }) {
             "
         >
             <div className="flex items-center gap-2">
-
                 <span className="text-slate-700">
                     {icon}
                 </span>
-
                 <span className="text-sm text-slate-500">
                     {label}
                 </span>
-
             </div>
-
             <span className="text-sm text-slate-500">
                 {value ?? 0}
             </span>

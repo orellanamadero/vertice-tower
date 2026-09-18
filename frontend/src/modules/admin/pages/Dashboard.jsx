@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../services/api";
+import { invalidarProyectoRecorridoCache } from "../../../services/api";
 import { useOutletContext } from "react-router-dom";
 import { CiEdit } from "react-icons/ci";
 
@@ -17,17 +18,13 @@ function Dashboard() {
             const response = await apiFetch(
                 "/proyectos/unidades/tipos-venta/"
             );
-
             if (!response.ok) {
                 throw new Error(
                     "No se pudieron obtener los tipos de venta"
                 );
             }
-
             const data = await response.json();
-
             setTiposVenta(data);
-
         } catch (error) {
             console.error(
                 "Error al cargar tipos de venta:",
@@ -80,7 +77,30 @@ function Dashboard() {
             console.log("No hay unidad seleccionada");
             return;
         }
+        const estadoAnterior = Number(unidadSeleccionada.estado);
+        const estadoNuevo = Number(formulario.estado);
 
+          if (
+            [2, 3].includes(estadoNuevo) &&
+            estadoAnterior !== estadoNuevo &&
+            !formulario.documentoVenta
+        ) {
+            alert(
+                estadoNuevo === 2
+                    ? "Debe subir un documento de respaldo para vender la unidad."
+                    : "Debe subir un documento de respaldo para reservar la unidad."
+            );
+
+            return;
+        }
+
+        if (
+            estadoNuevo === 2 &&
+            !formulario.tipoVenta
+        ) {
+            alert("Debe seleccionar el tipo de venta.");
+            return;
+        }
         try {
             console.log("EDITANDO UNIDAD:", unidadSeleccionada.id);
             console.log("FORMULARIO:", formulario);
@@ -90,9 +110,7 @@ function Dashboard() {
 
             if (esAdministrador) {
                 const precioNumerico = Number(formulario.precio);
-
                 console.log("PRECIO NUMÉRICO:", precioNumerico);
-
                 if (
                     !Number.isFinite(precioNumerico) ||
                     precioNumerico < 0
@@ -100,23 +118,19 @@ function Dashboard() {
                     console.log("PRECIO INVÁLIDO");
                     return;
                 }
-
                 formData.append(
                     "precio",
                     precioNumerico.toFixed(2)
                 );
-
                 formData.append(
                     "moneda",
                     formulario.moneda
                 );
             }
-
             formData.append(
                 "estado",
                 formulario.estado
             );
-
             if (formulario.tipoVenta) {
                 formData.append(
                     "tipoVenta",
@@ -130,9 +144,7 @@ function Dashboard() {
                     formulario.documentoVenta
                 );
             }
-
             console.log("ENVIANDO PETICIÓN...");
-
             const response = await apiFetch(
                 `/proyectos/unidades/${unidadSeleccionada.id}/editar/`,
                 {
@@ -140,34 +152,26 @@ function Dashboard() {
                     body: formData,
                 }
             );
-
             console.log("STATUS:", response.status);
-
             if (!response.ok) {
                 const errorData = await response.json();
-
                 console.error(
                     "ERROR DEL BACKEND:",
                     errorData
                 );
-
                 throw new Error(
                     "No se pudo editar la unidad"
                 );
             }
-
             const data = await response.json();
-
             console.log(
                 "UNIDAD ACTUALIZADA:",
                 data
             );
-
+            invalidarProyectoRecorridoCache();
             await cargarUnidades();
-
             setModal(null);
             setUnidadSeleccionada(null);
-
             setFormulario({
                 precio: "",
                 moneda: 1,
@@ -183,6 +187,7 @@ function Dashboard() {
             );
         }
     };
+
     const pisos = useMemo(() => {
         return [...new Set(
             unidades.map((unidad) => unidad.numeroPiso)
@@ -191,11 +196,9 @@ function Dashboard() {
 
     const unidadesFiltradas = useMemo(() => {
         return unidades.filter((unidad) => {
-
             const coincideEstado =
                 filtroEstado === "todos" ||
                 unidad.estado === Number(filtroEstado);
-
             const coincidePiso =
                 filtroPiso === "todos" ||
                 unidad.numeroPiso === Number(filtroPiso);
@@ -213,6 +216,10 @@ function Dashboard() {
     const vendidas = unidades.filter(
         (unidad) => unidad.estado === 2
     ).length;
+    const reservadas = unidades.filter(
+        (unidad) => unidad.estado === 3
+    ).length;
+
     const resumen = [
         {
             label: "Total",
@@ -228,6 +235,11 @@ function Dashboard() {
             value: vendidas,
             valueClass: "text-red-600",
         },
+        {
+            label: "Reservadas",
+            value: reservadas,
+            valueClass: "text-amber-600",
+        },
     ];
 
     if (loading) {
@@ -237,7 +249,7 @@ function Dashboard() {
             </main>
         );
     }
-
+    
     return (
         <main className="min-h-screen bg-white pt-25">
             <header className="
@@ -277,7 +289,7 @@ function Dashboard() {
                 <div className="
                     grid
                     gap-4
-                    md:grid-cols-3
+                    md:grid-cols-4
                 ">
                     {resumen.map((item) => (
                         <div
@@ -312,8 +324,6 @@ function Dashboard() {
                         </div>
                     ))}
                 </div>
-
-                {/* FILTROS */}
 
                 <div className="
                     mt-8
@@ -363,8 +373,11 @@ function Dashboard() {
                                 <option value="2">
                                     Vendido
                                 </option>
+                                <option value="3">
+                                    Reservado
+                                </option>
                             </select>
-                                                        <span className="
+                            <span className="
                                 pointer-events-none
                                 absolute
                                 right-3
@@ -376,7 +389,6 @@ function Dashboard() {
                             </span>
                         </div>
                     </div>
-
 
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-600">
@@ -516,12 +528,16 @@ function Dashboard() {
                                                 ${
                                                     unidad.estado === 1
                                                         ? "bg-green-100 text-green-700"
-                                                        : "bg-red-100 text-red-700"
+                                                        : unidad.estado === 2
+                                                            ? "bg-red-100 text-red-700"
+                                                            : "bg-amber-100 text-amber-700"
                                                 }
                                             `}>
                                                 {unidad.estado === 1
                                                     ? "Disponible"
-                                                    : "Vendido"
+                                                    : unidad.estado === 2
+                                                        ? "Vendido"
+                                                        : "Reservado"
                                                 }
                                             </span>
 
@@ -591,20 +607,14 @@ function Dashboard() {
                         shadow-2xl
                     ">
 
-                        {/* ENCABEZADO */}
-
                         <h2 className="text-xl font-semibold">
                             Editar unidad
                         </h2>
-
                         <p className="mt-1 text-sm text-gray-500">
                             {unidadSeleccionada.tipoUnidad.nombre}
                             {" · "}
                             Piso {unidadSeleccionada.numeroPiso}
                         </p>
-
-
-                        {/* PRECIO */}
 
                         <div className="mt-6">
 
@@ -698,11 +708,7 @@ function Dashboard() {
 
                         </div>
 
-
-                        {/* MONEDA */}
-
                         <div className="mt-4">
-
                             <label className="
                                 mb-2
                                 block
@@ -773,11 +779,7 @@ function Dashboard() {
 
                         </div>
 
-
-                        {/* ESTADO */}
-
                         <div className="mt-4">
-
                             <label className="
                                 mb-2
                                 block
@@ -788,15 +790,20 @@ function Dashboard() {
                             ">
                                 Estado
                             </label>
-
                             <select
                                 value={formulario.estado}
-                                onChange={(event) =>
+                                onChange={(event) => {
+                                    const nuevoEstado = Number(event.target.value);
+
                                     setFormulario(prev => ({
                                         ...prev,
-                                        estado: Number(event.target.value)
-                                    }))
-                                }
+                                        estado: nuevoEstado,
+                                        tipoVenta: nuevoEstado === 2
+                                            ? prev.tipoVenta
+                                            : "",
+                                        documentoVenta: null,
+                                    }));
+                                }}
                                 className="
                                     w-full
                                     rounded-xl
@@ -811,21 +818,18 @@ function Dashboard() {
                                 <option value={1}>
                                     Disponible
                                 </option>
-
                                 <option value={2}>
                                     Vendido
+                                </option>
+                                <option value={3}>
+                                    Reservado
                                 </option>
                             </select>
 
                         </div>
 
-
-                        {/* TIPO DE VENTA */}
-
-                        {Number(formulario.estado) === 2 && (
-
+                        {[2, 3].includes(Number(formulario.estado)) && (
                             <div className="mt-4">
-
                                 <label className="
                                     mb-2
                                     block
@@ -876,10 +880,7 @@ function Dashboard() {
 
                         )}
 
-
-                        {/* DOCUMENTO */}
-
-                        {Number(formulario.estado) === 2 && (
+                        {[2, 3].includes(Number(formulario.estado)) && (
 
                             <div className="mt-4">
 

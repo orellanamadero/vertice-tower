@@ -55,6 +55,20 @@ function Historial() {
         cargarHistorial();
     }, []);
 
+    const getDocumentoUrl = (documento) => {
+        if (!documento) return "";
+
+        const backendUrl = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
+
+        const pathname = documento.startsWith("http")
+            ? new URL(documento).pathname
+            : documento.startsWith("/")
+                ? documento
+                : `/${documento}`;
+
+        return `${backendUrl}${pathname}`;
+    };
+
     if (sinPermiso) {
         return (
             <main className="
@@ -119,8 +133,6 @@ function Historial() {
                 </div>
             </header>
 
-            {/* TABLA */}
-
             <div className="
                 mx-auto
                 max-w-7xl
@@ -138,8 +150,6 @@ function Historial() {
                     md:flex-row
                     md:items-end
                 ">
-
-                    {/* FILTRO PISO */}
 
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-600">
@@ -192,9 +202,6 @@ function Historial() {
                         </div>
                     </div>
 
-
-                    {/* FILTRO TIPO */}
-
                     <div className="flex flex-col gap-1">
                         <label className="text-sm font-medium text-gray-600">
                             Tipo de cambio
@@ -243,9 +250,6 @@ function Historial() {
                         </div>
                     </div>
 
-
-                    {/* LIMPIAR */}
-
                     {(filtroPiso !== "todos" || filtroTipo !== "todos") && (
                         <button
                             type="button"
@@ -277,51 +281,44 @@ function Historial() {
                     <div className="max-w-7xl mx-auto border border-slate-200 rounded-2xl overflow-x-auto">
                         <table className="w-full">
                             <thead className="text-slate-900 text-sm font-semibold border-b border-slate-300 whitespace-nowrap">
-                                <tr class="bg-slate-50">
+                                <tr className="bg-slate-50">
                                     <th scope="col" className="table-header">
                                         Piso
                                     </th>
                                     <th scope="col" className="table-header">
                                         Unidad
                                     </th>
-
                                     <th scope="col" className="table-header">
                                         Tipo de cambio
                                     </th>
-
                                     <th scope="col" className="table-header">
                                         Cambio
                                     </th>
-
+                                    <th scope="col" className="table-header">
+                                        Respaldo
+                                    </th>
                                     <th scope="col" className="table-header">
                                         Usuario
                                     </th>
-
                                     <th scope="col" className="table-header">
                                         Fecha
                                     </th>
-
                                 </tr>
                             </thead>
 
-                            <tbody class="text-sm divide-y divide-slate-200">
+                            <tbody className="text-sm divide-y divide-slate-200">
 
                                 {historialFiltrado.map((registro) => (
                                     <tr
                                         key={`${registro.tipo}-${registro.id}`}
-                                        class="hover:bg-slate-50 text-center"
+                                        className="hover:bg-slate-50 text-center"
                                     >
-                                        {/* PISO */}
                                         <td className="table-body">
                                             {registro.numero_piso}°
                                         </td>
-
-                                        {/* DEPARTAMENTO */}
                                         <td className="table-body">
                                             {registro.unidad_codigo}
                                         </td>
-
-                                        {/* TIPO */}
                                         <td className="table-body">
                                             {registro.tipo === "estado" ? (
                                                 <span className="
@@ -350,13 +347,8 @@ function Historial() {
                                             )}
 
                                         </td>
-
-                                        {/* CAMBIO */}
-
                                         <td className="table-body">
-
                                             {registro.tipo === "estado" ? (
-
                                                 <div className="
                                                     flex
                                                     flex-col
@@ -364,16 +356,12 @@ function Historial() {
                                                     justify-center
                                                     gap-2
                                                 ">
-
-                                                    {/* CAMBIO DE ESTADO */}
-
                                                     <div className="
                                                         flex
                                                         items-center
                                                         justify-center
                                                         gap-2
                                                     ">
-
                                                         <span className="
                                                             rounded-full
                                                             bg-zinc-100
@@ -385,13 +373,9 @@ function Historial() {
                                                         ">
                                                             {registro.estado_anterior_nombre}
                                                         </span>
-
                                                         <span className="
                                                             text-gray-400
-                                                        ">
-                                                            →
-                                                        </span>
-
+                                                        "> → </span>
                                                         <span
                                                             className={`
                                                                 rounded-full
@@ -400,73 +384,25 @@ function Historial() {
                                                                 text-xs
                                                                 font-medium
                                                                 ${
-                                                                    registro.estado_nuevo_nombre ===
-                                                                    "Disponible"
+                                                                    registro.estado_nuevo === 1
                                                                         ? "bg-green-100 text-green-700"
-                                                                        : "bg-red-100 text-red-700"
+                                                                        : registro.estado_nuevo === 2
+                                                                            ? "bg-red-100 text-red-700"
+                                                                            : "bg-amber-100 text-amber-700"
                                                                 }
                                                             `}
                                                         >
                                                             {registro.estado_nuevo_nombre}
                                                         </span>
-
                                                     </div>
-                                                    {/* INFORMACIÓN DE VENTA */}
-
-                                                    {registro.estado_anterior_nombre === "Disponible" &&
-                                                        registro.estado_nuevo_nombre === "Vendido" &&
-                                                        registro.tipo_venta_nombre && (
-
-                                                            <div className="
-                                                                flex
-                                                                flex-col
-                                                                items-center
-                                                                gap-1
-                                                                text-xs
-                                                            ">
-
-                                                                <span className="
-                                                                    font-medium
-                                                                    text-gray-400
-                                                                ">
-                                                                    {registro.tipo_venta_nombre}
-                                                                </span>
-
-                                                                {registro.documento_venta && (
-                                                                    <a
-                                                                        href={
-                                                                            registro.documento_venta.startsWith("http")
-                                                                                ? registro.documento_venta
-                                                                                : `http://127.0.0.1:8000${registro.documento_venta}`
-                                                                        }
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="
-                                                                            font-medium
-                                                                            text-blue-600
-                                                                            hover:text-blue-800
-                                                                            hover:underline
-                                                                        "
-                                                                    >
-                                                                        Ver documento
-                                                                    </a>
-                                                                )}
-
-                                                            </div>
-
-                                                        )}
-
                                                 </div>
-
                                             ) : (
-
                                                 <div className="
                                                     flex
                                                     items-center
                                                     justify-center
                                                     gap-2
                                                 ">
-
                                                     <span className="
                                                         text-gray-500
                                                     ">
@@ -480,13 +416,9 @@ function Historial() {
                                                             }
                                                         )}
                                                     </span>
-
                                                     <span className="
                                                         text-gray-400
-                                                    ">
-                                                        →
-                                                    </span>
-
+                                                    "> → </span>
                                                     <span className="
                                                         font-medium
                                                     ">
@@ -500,21 +432,53 @@ function Historial() {
                                                             }
                                                         )}
                                                     </span>
-
                                                 </div>
-
                                             )}
-
                                         </td>
 
-                                        {/* USUARIO */}
+                                        <td className="table-body">
+                                            {[2, 3].includes(registro.estado_nuevo) ? (
+                                                <div className="
+                                                    flex
+                                                    flex-col
+                                                    items-center
+                                                    gap-1
+                                                    text-xs
+                                                ">
+                                                    <span className="
+                                                        font-medium
+                                                        text-gray-400
+                                                    ">
+                                                        {registro.tipo_venta_nombre || "-"}
+                                                    </span>
+                                                    {registro.documento_venta ? (
+                                                        <a
+                                                            href={getDocumentoUrl(registro.documento_venta)}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="
+                                                                font-medium
+                                                                text-blue-600
+                                                                hover:text-blue-800
+                                                                hover:underline
+                                                            "
+                                                        >
+                                                            Ver documento
+                                                        </a>
+                                                    ) : (
+                                                        <span className="text-gray-400">
+                                                            -
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                "-"
+                                            )}
+                                        </td>
 
                                         <td className="table-body">
                                             {registro.usuario_nombre}
                                         </td>
-
-                                        {/* FECHA */}
-
                                         <td className="table-body">
                                             {new Date(
                                                 registro.fecha
@@ -522,19 +486,13 @@ function Historial() {
                                                 "es-BO"
                                             )}
                                         </td>
-
                                     </tr>
-
                                 ))}
-
                             </tbody>
-
                         </table>
-
                     </div>
                 </div>
             </div>
-
         </main>
     );
 }

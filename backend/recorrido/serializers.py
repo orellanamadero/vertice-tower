@@ -318,181 +318,141 @@ class UnidadEdicionSerializer(serializers.ModelSerializer):
             "tipoVenta",
             "documentoVenta",
         ]
-
     def validate(self, attrs):
-
         usuario = self.context["request"].user
-
-        # Solo ADMINISTRADOR puede modificar precio o moneda
         if not usuario.groups.filter(
             name="ADMINISTRADOR"
         ).exists():
-
             if "precio" in attrs or "moneda" in attrs:
                 raise serializers.ValidationError({
                     "permiso":
                     "Solo un administrador puede modificar el precio o la moneda."
                 })
-
+        estado_anterior = self.instance.estado
         estado_nuevo = attrs.get(
             "estado",
-            self.instance.estado
+            estado_anterior
         )
-
-        if estado_nuevo == 2:
-
+        documento_nuevo = attrs.get(
+            "documentoVenta"
+        )
+        documento_actual = self.instance.documentoVenta
+        if estado_nuevo in [2, 3]:
             tipo_venta = attrs.get(
                 "tipoVenta",
                 self.instance.tipoVenta
             )
-
-            documento = attrs.get(
-                "documentoVenta",
-                self.instance.documentoVenta
-            )
-
             if not tipo_venta:
                 raise serializers.ValidationError({
                     "tipoVenta":
                     "Debe seleccionar el tipo de venta."
                 })
-
-            if not documento:
+            if (
+                estado_anterior != estado_nuevo
+                and not documento_nuevo
+            ):
+                raise serializers.ValidationError({
+                    "documentoVenta":
+                    "Debe adjuntar el documento de respaldo."
+                })
+            if (
+                estado_anterior == estado_nuevo
+                and not documento_nuevo
+                and not documento_actual
+            ):
                 raise serializers.ValidationError({
                     "documentoVenta":
                     "Debe adjuntar el documento de respaldo."
                 })
 
+        elif estado_nuevo == 1:
+            attrs["tipoVenta"] = None
         return attrs
 
     def validate_documentoVenta(self, value):
-
         if value:
-
             if value.content_type != "application/pdf":
                 raise serializers.ValidationError(
                     "El documento debe estar en formato PDF."
                 )
-
             if value.size > 5 * 1024 * 1024:
                 raise serializers.ValidationError(
                     "El documento no puede superar los 5 MB."
                 )
-
         return value
 
     def update(self, instance, validated_data):
         estado_anterior = instance.estado
         precio_anterior = instance.precio
-
         estado_nuevo = validated_data.get(
             "estado",
             instance.estado
         )
-
         precio_nuevo = validated_data.get(
             "precio",
             instance.precio
         )
-
         usuario = self.context["request"].user
-
         with transaction.atomic():
-
             documento_anterior = instance.documentoVenta
-
             instance = super().update(
                 instance,
                 validated_data
             )
-
-            venta_historica = None
-
-            # ==========================================
-            # DISPONIBLE -> VENDIDO
-            # ==========================================
-
+            historial_documento = None
             if (
-                estado_anterior != 2
-                and estado_nuevo == 2
+                estado_anterior != estado_nuevo
+                and estado_nuevo in [2, 3]
             ):
-
                 if instance.documentoVenta:
-
                     archivo = instance.documentoVenta
-
                     archivo.open("rb")
-
                     contenido = archivo.read()
-
                     nombre = Path(
                         archivo.name
                     ).name
-
-                    venta_historica = HistorialVentaUnidad.objects.create(
-                        unidad=instance,
-                        tipoVenta=instance.tipoVenta,
-                        usuario=usuario
+                    historial_documento = (
+                        HistorialVentaUnidad.objects.create(
+                            unidad=instance,
+                            tipoVenta=instance.tipoVenta,
+                            usuario=usuario
+                        )
                     )
-
-                    venta_historica.documentoVenta.save(
+                    historial_documento.documentoVenta.save(
                         nombre,
                         ContentFile(contenido),
                         save=True
                     )
-
                     archivo.close()
-
-            # ==========================================
-            # HISTORIAL DE ESTADO
-            # ==========================================
-
             if estado_anterior != estado_nuevo:
-
                 HistorialEstadoUnidad.objects.create(
                     unidad=instance,
                     estado_anterior=estado_anterior,
                     estado_nuevo=estado_nuevo,
-                    venta=venta_historica,
+                    venta=historial_documento,
                     usuario=usuario
                 )
-
-            # ==========================================
-            # HISTORIAL DE PRECIO
-            # ==========================================
-
             if precio_anterior != precio_nuevo:
-
                 HistorialPrecioUnidad.objects.create(
                     unidad=instance,
                     precio_anterior=precio_anterior,
                     precio_nuevo=precio_nuevo,
                     usuario=usuario
                 )
-
-            # ==========================================
-            # VENDIDO -> DISPONIBLE
-            # ==========================================
-
             if (
-                estado_anterior == 2
+                estado_anterior != 1
                 and estado_nuevo == 1
             ):
-
                 if documento_anterior:
-
                     documento_anterior.delete(
                         save=False
                     )
-
                 instance.documentoVenta = None
                 instance.tipoVenta = None
-
                 instance.save(
                     update_fields=[
                         "documentoVenta",
                         "tipoVenta"
                     ]
                 )
-
         return instance

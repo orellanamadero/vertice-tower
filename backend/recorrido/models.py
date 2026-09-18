@@ -186,6 +186,7 @@ class Unidad(models.Model):
     ESTADOS=[
         (1, "Disponible"),
         (2, "Vendido"),
+        (3, "Reservado"),
     ]
     MONEDAS=[
         (1, "$US"),
@@ -324,7 +325,9 @@ class HistorialVentaUnidad(models.Model):
     )
 
     tipoVenta = models.PositiveSmallIntegerField(
-        choices=Unidad.TIPO_VENTA_CHOICES
+        choices=Unidad.TIPO_VENTA_CHOICES,
+        null=True,
+        blank=True,
     )
 
     documentoVenta = models.FileField(
@@ -342,4 +345,4 @@ class HistorialVentaUnidad(models.Model):
     )
 
     def __str__(self):
-        return f"Venta histórica - Unidad {self.unidad.id}"
+        return f"Documento histórico - Unidad {self.unidad.id}"

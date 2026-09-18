@@ -3,46 +3,40 @@ import { useEffect, useState } from "react";
 import UnidadLabel from "../../components/Recorrido/UnidadLabel";
 
 function UnidadMap({ floor, project, size }) {
-
     const navigate = useNavigate();
 
     const [hoveredUnit, setHoveredUnit] = useState(null);
     const [pulseUnit, setPulseUnit] = useState(null);
 
     const { width, height } = size;
-
     const units = floor?.unidades || [];
 
     const getUnitColor = (estado) => {
         switch (estado) {
             case 1:
                 return "var(--color-verde)";
-
             case 2:
                 return "var(--color-rojo)";
-
+            case 3:
+                return "var(--color-yellow)";
             default:
                 return "#94a3b8";
         }
     };
 
     const handleUnitClick = (unit) => {
-
         if (!unit || unit.estado !== 1) {
             return;
         }
-
         navigate(
             `/recorrido/${floor.id}/${unit.tipoUnidad.codigo}`
         );
     };
 
     useEffect(() => {
-
         const availableUnits = units.filter(
             unit => unit.estado === 1
         );
-
         if (availableUnits.length === 0) {
             setPulseUnit(null);
             return;
@@ -83,28 +77,20 @@ function UnidadMap({ floor, project, size }) {
                     inset-0
                     h-full
                     w-full
-                "
-            >
-
+            ">
                 {units.map((unit) => {
-
                     const path =
                         unit.tipoUnidad?.path;
-
                     if (!path) {
                         return null;
                     }
-
                     const isPulsing =
                         pulseUnit === unit.id &&
                         unit.estado === 1;
-
                     const isHovered =
                         hoveredUnit === unit.id;
-
                     const color =
                         getUnitColor(unit.estado);
-
                     return (
                         <path
                             key={unit.id}

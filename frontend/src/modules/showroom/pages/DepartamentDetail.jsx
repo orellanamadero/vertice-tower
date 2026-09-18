@@ -52,28 +52,17 @@ function DepartmentDetail() {
     };
 
     useEffect(() => {
-
         async function cargarProyecto() {
-
             try {
-
                 const data = await getProyectoRecorrido();
-
                 setProject(data);
-
             } catch (error) {
-
                 console.error(error);
-
             } finally {
-
                 setLoading(false);
-
             }
         }
-
         cargarProyecto();
-
     }, []);
 
     const floor = project?.pisos?.find(
@@ -86,7 +75,6 @@ function DepartmentDetail() {
     );
 
     useEffect(() => {
-
         if (!unit) return;
         const tipoUnidad = unit.tipoUnidad;
         if (tipoUnidad.render3D) {

@@ -2,7 +2,6 @@ import { useState } from "react";
 import UnidadMap from "./UnidadMap";
 
 function FloorPlan({ project, floor }) {
-
     const floorImage = floor.imagePiso;
 
     const [imageSize, setImageSize] = useState({
@@ -11,12 +10,10 @@ function FloorPlan({ project, floor }) {
     });
 
     const handleImageLoad = (event) => {
-
         const {
             naturalWidth,
             naturalHeight,
         } = event.target;
-
         setImageSize({
             width: naturalWidth,
             height: naturalHeight,
@@ -24,7 +21,6 @@ function FloorPlan({ project, floor }) {
     };
 
     return (
-
         <div
             className="
                 relative
@@ -32,9 +28,7 @@ function FloorPlan({ project, floor }) {
                 w-full
                 overflow-x-auto
                 overflow-y-hidden
-            "
-        >
-
+        ">
             <div
                 className="
                     relative
@@ -44,8 +38,7 @@ function FloorPlan({ project, floor }) {
                     w-max
                     items-center
                     justify-center
-                "
-            >
+            ">
 
                 <div
                     className="
