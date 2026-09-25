@@ -104,9 +104,9 @@ function HeroProject({ project }) {
                     items-center
                     justify-center
                     px-6
-                    pt-10
-                "
-            >
+                    pt-45
+                    lg:pt-70
+            ">
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={stage}
@@ -130,41 +130,37 @@ function HeroProject({ project }) {
                             max-w-3xl
                             text-center
                             text-white
-                        "
-                    >
-                        <img
-                            src={currentStage.imagenHero}
-                            alt=""
-                            className="
-                                mx-auto
-                                block
-                                h-40
-                                w-auto
-                                object-contain
-                                md:h-60
-                                lg:h-90
-                                landscape:max-h-[25vh]
-                                landscape:w-auto
-                            "
-                        />
-
-                        {/* SUBTÍTULO */}
+                    ">
                         <span
                             className="
-                                my-4
                                 lg:my-6
                                 block
                                 tracking-[0.2em]
-                                text-white/90
+                                text-white/80
                                 text-xs
+                                font-light
                                 md:text-sm
                                 lg:text-base
                             "
                         >
                             {currentStage.subtitle}
                         </span>
-
-                        {/* BOTÓN */}
+                        <img
+                            src={currentStage.imagenHero}
+                            alt=""
+                            className="
+                                mx-auto
+                                my-5
+                                block
+                                h-20
+                                w-auto
+                                object-contain
+                                md:h-30
+                                lg:h-40
+                                landscape:max-h-[25vh]
+                                landscape:w-auto
+                            "
+                        />
                         <AnimatePresence>
                             {showButton && (
                                 <motion.div
@@ -204,22 +200,22 @@ function HeroProject({ project }) {
                         </AnimatePresence>
                         {stage === 0 && (
                             <img
-                                src={project.logo}
+                                src={project.logoProyecto}
                                 alt={project.nombreProyecto}
                                 className="
-                                    mx-auto
-                                    mt-5
+                                    absolute
+                                    right-6
                                     block
-                                    h-20
+                                    h-10
                                     w-auto
                                     object-contain
                                     brightness-0
                                     invert
-                                    md:h-30
-                                    lg:mt-10
-                                    landscape:max-h-[18vh]
-                                    landscape:mt-2
-                                    landscape:w-auto
+                                    md:bottom-8
+                                    md:h-16
+                                    bottom-15
+                                    lg:right-12
+                                    lg:h-20
                                 "
                             />
                         )}

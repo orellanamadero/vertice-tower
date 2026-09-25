@@ -6,8 +6,7 @@ function UnidadCaracteristica({ icon, label, value }) {
                 items-center
                 justify-between
                 py-1
-            "
-        >
+        ">
             <div className="flex items-center gap-2">
                 <span className="text-slate-700">
                     {icon}
@@ -19,7 +18,6 @@ function UnidadCaracteristica({ icon, label, value }) {
             <span className="text-sm text-slate-500">
                 {value ?? 0}
             </span>
-
         </div>
     );
 }

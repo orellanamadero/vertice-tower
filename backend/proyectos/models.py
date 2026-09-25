@@ -3,12 +3,12 @@ from django.db import models
 
 class Empresa(models.Model):
     nameEmpresa = models.CharField(max_length=100)
-    logo1 = models.ImageField(
+    logoEmpresa = models.ImageField(
         upload_to="empresa/",
         blank=True,
         null=True
     )
-    logo2 = models.ImageField(
+    faviconEmpresa = models.ImageField(
         upload_to="empresa/",
         blank=True,
         null=True
@@ -47,8 +47,13 @@ class Proyecto(models.Model):
     nombreProyecto = models.CharField(
         max_length=150
     )
-    logo = models.ImageField(
-        upload_to="proyecto/logo/",
+    logoProyecto = models.ImageField(
+        upload_to="pro+yecto/logo/",
+        blank=True,
+        null=True
+    )
+    faviconProyecto = models.ImageField(
+        upload_to="pro+yecto/logo/",
         blank=True,
         null=True
     )

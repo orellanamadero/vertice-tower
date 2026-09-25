@@ -116,7 +116,6 @@ function Amenidades() {
                     );
                 })}
             </div>
-
         </main>
     );
 }

@@ -4,6 +4,7 @@ import {getProyectoRecorrido,getProyectoRecorridoCache,} from "../../../services
 import FloorPlan from "../components/Recorrido/FloorPlan";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import fondo from "../images/fondo.webp";
+import logo from "../images/BLANCO.webp";
 
 function obtenerPisoInicial(project, floorId) {
     if (!project?.pisos?.length) {
@@ -195,14 +196,14 @@ function Recorrido() {
                             text-white
                             shadow-2xl
                     ">
-                        {project?.empresa?.logo2 && (
+                        { logo  && (
                             <img
-                                src={project.empresa.logo2}
+                                src={logo}
                                 alt=""
                                 className="
                                     mx-auto
                                     block
-                                    h-10
+                                    h-15
                                     w-auto
                                     object-contain
                                     md:h-15
@@ -227,9 +228,7 @@ function Recorrido() {
                                 text-sm
                                 text-white
                         ">
-                            Toca sobre un departamento
-                            disponible para conocer sus
-                            detalles.
+                            Desliza y toca un departamento disponible para conocer sus detalles.
                         </p>
                         <div
                             className="

@@ -172,24 +172,37 @@ class UsuarioActualView(APIView):
                 for group in request.user.groups.all()
             ],
         })
-    
+
+
 class UsuarioListCreateView(generics.ListCreateAPIView):
-    queryset = User.objects.all().order_by("username")
+    queryset = User.objects.filter(
+        is_superuser=False
+    ).order_by("username")
+
     serializer_class = UsuarioSerializer
+
     permission_classes = [
         IsAuthenticated,
         EsAdministrador
     ]
+
     def perform_create(self, serializer):
         user = serializer.save()
+
         grupo = self.request.data.get("group")
+
         if grupo:
             group = Group.objects.get(name=grupo)
             user.groups.add(group)
 
+
 class UsuarioDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.filter(
+        is_superuser=False
+    )
+
     serializer_class = UsuarioSerializer
+
     permission_classes = [
         IsAuthenticated,
         EsAdministrador
@@ -210,6 +223,7 @@ pdfmetrics.registerFont(
         BASE_DIR / "fonts" / "Hilmar-SemiBold.ttf"
     )
 )
+
 class UnidadFichaTecnicaView(APIView):
 
     permission_classes = [AllowAny]

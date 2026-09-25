@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from proyectos.models import Proyecto
+from django.core.exceptions import ValidationError
 
 def piso_image_path(instance, filename):
     return f"pisos/{instance.numero}/{filename}"
@@ -193,7 +194,9 @@ class Unidad(models.Model):
         validators=[MinValueValidator(0)]
     )
     moneda = models.PositiveSmallIntegerField(
-        choices=MONEDAS
+        choices=MONEDAS,
+        null=True,
+        blank=True
     )
     tipoVenta = models.PositiveSmallIntegerField(
         choices=TIPO_VENTA_CHOICES,
@@ -210,8 +213,25 @@ class Unidad(models.Model):
             ("cambiar_estado_unidad", "Puede cambiar estado de unidad"),
             ("ver_historial_unidad", "Puede ver historial de unidades"),
     ] 
+        
     def __str__(self):
         return f"{self.tipoUnidad.codigo} - {self.piso.nombrePiso}"
+    
+    def clean(self):
+        super().clean()
+        es_area_comun = (
+            self.tipoUnidad
+            and self.tipoUnidad.categoria
+            and self.tipoUnidad.categoria.nombre.upper() == "AREA COMUN"
+        )
+        if es_area_comun:
+            self.precio = None
+            self.moneda = None
+        else:
+            if not self.moneda:
+                raise ValidationError({
+                    "moneda": "Debe seleccionar una moneda."
+                })
 
 class HistorialEstadoUnidad(models.Model):
     unidad = models.ForeignKey(

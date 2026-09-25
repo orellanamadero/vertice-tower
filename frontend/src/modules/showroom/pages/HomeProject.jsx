@@ -3,9 +3,7 @@ import { useEffect, useState } from "react";
 import { getProyectoHero } from "../../../services/api";
 
 function HomeProject() {
-
     const [project, setProject] = useState(null);
-
     useEffect(() => {
         async function cargarHero() {
             try {
@@ -25,10 +23,8 @@ function HomeProject() {
             </div>
         );
     }
-
     return (
         <HeroProject project={project} />
     );
 }
-
 export default HomeProject;

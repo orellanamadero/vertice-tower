@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import logo from "../../../modules/showroom/images/BLANCO.webp";
 
 const menuItems = [
     { label: "Home", path: "/" },
@@ -18,20 +19,33 @@ function NavbarProject({ project }) {
         setIsMenuOpen(false);
     };
 
+    const location = useLocation();
+
+    const navbarTransparente =
+        location.pathname === "/" ||
+        location.pathname.startsWith("/recorrido");
+
     const empresa = project?.empresa;
 
     return (
         <header
-            className="
+            className={`
                 fixed
                 left-0
                 top-0
-                z-60
+                z-[1100]
                 h-15
                 w-full
-                bg-black/65
+                transition-all
+                duration-500
                 lg:h-17
-            "
+
+                ${
+                    navbarTransparente
+                        ? "bg-transparent"
+                        : "bg-black/75 backdrop-blur-md shadow-lg"
+                }
+            `}
         >
             <div
                 className="
@@ -51,11 +65,12 @@ function NavbarProject({ project }) {
                         p-3
                     "
                 >
-                    {/* LOGO */}
                     <Link
                         to="/"
                         onClick={closeMenu}
                         className="
+                            relative
+                            z-[1200]
                             flex
                             items-center
                             pl-2
@@ -66,11 +81,11 @@ function NavbarProject({ project }) {
                         "
                         aria-label="Ir al inicio"
                     >
-                        {empresa?.logo1 ? (
+                        {logo ? (
                             <img
-                                src={empresa.logo1}
+                                src={logo}
                                 alt={
-                                    empresa.nombre ||
+                                    empresa?.nombre ||
                                     "Logo del proyecto"
                                 }
                                 className="
@@ -104,6 +119,8 @@ function NavbarProject({ project }) {
                             )
                         }
                         className="
+                            relative
+                            z-[1200]
                             flex
                             flex-col
                             gap-1.5
@@ -191,38 +208,54 @@ function NavbarProject({ project }) {
                             </Link>
                         ))}
                     </div>
-
-                    {/* MENÚ MÓVIL */}
                     <div
                         id="mobile-project-menu"
                         className={`
-                            absolute
-                            right-0
-                            top-15
-                            z-1000
-                            w-[140px]
-                            overflow-hidden
-                            rounded-bl-lg
-                            bg-black/65
-                            shadow-xl
+                            fixed
+                            inset-0
+                            z-[999]
+
+                            flex
+                            h-screen
+                            w-screen
+                            items-center
+                            justify-center
+
+                            bg-black/75
+                            backdrop-blur-md
+
                             transition-all
-                            duration-300
+                            duration-500
+                            ease-in-out
+
                             md:hidden
+
                             ${
                                 isMenuOpen
-                                    ? "max-h-96 opacity-100"
-                                    : "pointer-events-none max-h-0 opacity-0"
+                                    ? "visible opacity-100"
+                                    : "invisible pointer-events-none opacity-0"
                             }
                         `}
                     >
-                        <div
-                            className="
+                        <nav
+                            className={`
                                 flex
-                                max-h-[80vh]
                                 flex-col
-                                overflow-y-auto
-                                py-1
-                            "
+                                items-center
+                                justify-center
+
+                                gap-2
+
+                                transition-all
+                                duration-500
+                                ease-out
+
+                                ${
+                                    isMenuOpen
+                                        ? "translate-y-0 opacity-100"
+                                        : "translate-y-6 opacity-0"
+                                }
+                            `}
                         >
                             {menuItems.map((item) => (
                                 <Link
@@ -230,20 +263,26 @@ function NavbarProject({ project }) {
                                     to={item.path}
                                     onClick={closeMenu}
                                     className="
-                                        px-4
+                                        relative
+                                        px-8
                                         py-3
-                                        text-right
-                                        text-sm
-                                        text-slate-50
-                                        text-shadow-lg
-                                        hover:bg-slate-50
-                                        hover:text-black
+
+                                        text-center
+                                        text-base
+                                        font-light
+                                        tracking-wide
+                                        text-white
+
+                                        transition-all
+                                        duration-300
+
+                                        hover:text-[var(--color-naranja)]
                                     "
                                 >
                                     {item.label}
                                 </Link>
                             ))}
-                        </div>
+                        </nav>
                     </div>
                 </nav>
             </div>

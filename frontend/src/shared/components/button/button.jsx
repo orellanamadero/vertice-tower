@@ -4,7 +4,6 @@ function Button({
     className=""
 }) {
 
-
 const styles = {
 
     primary:
@@ -13,8 +12,6 @@ const styles = {
     text-white
     hover:bg-slate-700
     `,
-
-
     secondary:
     `
     bg-white
@@ -25,11 +22,8 @@ const styles = {
 
 }
 
-
 return (
-
 <button
-
 className={`
     px-6
     py-3

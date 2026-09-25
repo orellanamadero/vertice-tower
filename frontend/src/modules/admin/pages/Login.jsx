@@ -49,26 +49,44 @@ function Login() {
     return (
         <main
             className="
+                relative
                 flex
                 min-h-screen
                 items-center
                 justify-center
-                bg-cover
-                bg-center
-                bg-no-repeat
+                overflow-hidden
                 px-6
-            "
-            style={{
-                backgroundImage: `url(${imageLogin})`,
-            }}
-        >
+        ">
+             <div
+                className="
+                    pointer-events-none
+                    fixed
+                    inset-0
+                    z-0
+                    h-screen
+                    w-screen
+                    bg-cover
+                    bg-left
+                    bg-no-repeat
+                "
+                style={{
+                    backgroundImage: `url(${imageLogin})`,
+                    backgroundPosition: "left center",
+                }}
+            />
             <div className="
+                relative
+                z-10
                 w-full
                 max-w-md
-                rounded-2xl
-                bg-white
+                rounded-3xl
+                border
+                border-white/40
+                bg-white/20
+                backdrop-blur-xl
+                backdrop-saturate-150
                 p-8
-                shadow-xl
+                shadow-[0_20px_60px_rgba(0,0,0,0.20)]
             ">
 
                 <div className="
@@ -103,7 +121,7 @@ function Login() {
                             text-xs
                             uppercase
                             tracking-widest
-                            text-gray-500
+                            text-gray-900
                         ">
                             Usuario
                         </label>
@@ -119,8 +137,8 @@ function Login() {
                                 w-full
                                 rounded-lg
                                 border
-                                border-black/10
-                                bg-zinc-50
+                                border-black/30
+                                bg-zinc-50/50
                                 px-4
                                 py-3
                                 outline-none
@@ -135,7 +153,7 @@ function Login() {
                             text-xs
                             uppercase
                             tracking-widest
-                            text-gray-500
+                            text-gray-900
                         ">
                             Contraseña
                         </label>
@@ -151,8 +169,8 @@ function Login() {
                                 w-full
                                 rounded-lg
                                 border
-                                border-black/10
-                                bg-zinc-50
+                                border-black/30
+                                bg-zinc-50/50
                                 px-4
                                 py-3
                                 outline-none

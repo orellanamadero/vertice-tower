@@ -1,20 +1,91 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../services/api";
+import { CiSearch, CiRedo } from "react-icons/ci";
+import { FiClock, FiRefreshCw, FiDollarSign, FiFileText,} from "react-icons/fi";
+import fondoUnidades from "../images/fondoUnidades.webp";
+
 function Historial() {
     const [historial, setHistorial] = useState([]);
     const [loading, setLoading] = useState(true);
     const [sinPermiso, setSinPermiso] = useState(false);
     const [filtroPiso, setFiltroPiso] = useState("todos");
     const [filtroTipo, setFiltroTipo] = useState("todos");
-    const historialFiltrado = historial.filter((registro) => {
-        const coincidePiso =
-            filtroPiso === "todos" ||
-            String(registro.numero_piso) === filtroPiso;
-        const coincideTipo =
-            filtroTipo === "todos" ||
-            registro.tipo === filtroTipo;
-        return coincidePiso && coincideTipo;
-    });
+    const [busqueda, setBusqueda] = useState("");
+
+    const historialFiltrado = useMemo(() => {
+        const textoBusqueda = busqueda.trim().toLowerCase();
+        return historial.filter((registro) => {
+            const coincidePiso =
+                filtroPiso === "todos" ||
+                String(registro.numero_piso) === filtroPiso;
+            const coincideTipo =
+                filtroTipo === "todos" ||
+                registro.tipo === filtroTipo;
+            const coincideBusqueda =
+                textoBusqueda === "" ||
+                registro.unidad_codigo
+                    ?.toLowerCase()
+                    .includes(textoBusqueda) ||
+                registro.usuario_nombre
+                    ?.toLowerCase()
+                    .includes(textoBusqueda) ||
+                registro.tipo_venta_nombre
+                    ?.toLowerCase()
+                    .includes(textoBusqueda);
+            return (
+                coincidePiso &&
+                coincideTipo &&
+                coincideBusqueda
+            );
+        });
+    }, [
+        historial,
+        filtroPiso,
+        filtroTipo,
+        busqueda
+    ]);
+    const totalRegistros = historial.length;
+    const cambiosEstado = historial.filter(registro => registro.tipo === "estado").length;
+    const cambiosPrecio = historial.filter(registro => registro.tipo === "precio").length;
+    const respaldos = historial.filter(registro => registro.documento_venta).length;
+    const resumen = [
+        {
+            label: "Registros",
+            value: totalRegistros,
+            description: "Movimientos registrados",
+            icon: FiClock,
+            iconClass: "text-slate-600",
+            iconBg: "bg-slate-100",
+            valueClass: "text-slate-950",
+        },
+        {
+            label: "Estados",
+            value: cambiosEstado,
+            description: "Cambios de estado",
+            icon: FiRefreshCw,
+            iconClass: "text-blue-600",
+            iconBg: "bg-blue-50",
+            valueClass: "text-blue-600",
+        },
+        {
+            label: "Precios",
+            value: cambiosPrecio,
+            description: "Cambios de precio",
+            icon: FiDollarSign,
+            iconClass: "text-emerald-600",
+            iconBg: "bg-emerald-50",
+            valueClass: "text-emerald-600",
+        },
+        {
+            label: "Respaldos",
+            value: respaldos,
+            description: "Documentos registrados",
+            icon: FiFileText,
+            iconClass: "text-amber-600",
+            iconBg: "bg-amber-50",
+            valueClass: "text-amber-600",
+        },
+    ];
     const pisosDisponibles = [
         ...new Set(
             historial.map((registro) => registro.numero_piso)
@@ -92,81 +163,247 @@ function Historial() {
     }
 
     return (
-        <main className="min-h-screen bg-white pt-25">
-
-            <header className="
-                px-6
-                py-5
-            ">
-                <div className="
-                    mx-auto
-                    max-w-7xl
-                ">
-                    <h1 className="
-                        text-3xl
-                        font-semibold
-                        uppercase
-                    ">
-                        Historial
-                    </h1>
-
-                    <p className="
-                        mt-1
-                        text-base
-                        md:text-lg
-                        text-gray-500
-                    ">
-                        Registro de cambios de estados y precios
-                    </p>
-                </div>
-            </header>
-
+        <main
+            className="
+                relative
+                min-h-screen
+                overflow-hidden
+                pt-24
+        ">
+            <div
+                className="
+                    pointer-events-none
+                    fixed
+                    inset-0
+                    z-0
+                    h-screen
+                    w-screen
+                    bg-cover
+                    bg-left
+                    bg-no-repeat
+                "
+                style={{
+                    backgroundImage: `url(${fondoUnidades})`,
+                    backgroundPosition: "left center",
+                }}
+            />
             <div className="
+                relative
+                z-10
                 mx-auto
-                max-w-7xl
-                p-6
+                w-full
+                max-w-[1380px]
+                px-5
+                pb-12
+                md:px-8
+                lg:pl-40
+                lg:pr-10
             ">
-                <div className="
-                    mb-6
+                <header className="
                     flex
                     flex-col
-                    gap-4
-                    rounded-2xl
-                    bg-white
-                    p-5
-                    shadow-sm
+                    gap-5
+                    py-7
                     md:flex-row
                     md:items-end
+                    md:justify-between
                 ">
-
-                    <div className="flex flex-col gap-1">
-                        <label className="text-sm font-medium text-gray-600">
-                            Piso
-                        </label>
-
-                        <div className="relative w-fit">
+                    <div>
+                        <span className="
+                            text-xs
+                            font-medium
+                            uppercase
+                            tracking-[0.35em]
+                            text-slate-400
+                        ">
+                            Administración
+                        </span>
+                        <h1 className="
+                            mt-2
+                            text-3xl
+                            font-bold
+                            uppercase
+                            tracking-tight
+                            text-slate-950
+                            md:text-4xl
+                        ">
+                            Historial
+                        </h1>
+                        <p className="
+                            mt-1
+                            text-base
+                            text-slate-500
+                            md:text-lg
+                        ">
+                            Registro de cambios de estados y precios
+                        </p>
+                    </div>
+                </header>
+                <section className="
+                    grid
+                    grid-cols-1
+                    gap-4
+                    sm:grid-cols-2
+                    xl:grid-cols-4
+                ">
+                    {resumen.map((item) => {
+                        const Icon = item.icon;
+                        return (
+                            <article
+                                key={item.label}
+                                className="
+                                    flex
+                                    min-h-[110px]
+                                    items-center
+                                    gap-5
+                                    rounded-2xl
+                                    border
+                                    border-white/95
+                                    bg-white
+                                    p-6
+                                    shadow-xl
+                                    backdrop-blur
+                            ">
+                                <div
+                                    className={`
+                                        flex
+                                        h-14
+                                        w-14
+                                        shrink-0
+                                        items-center
+                                        justify-center
+                                        rounded-2xl
+                                        ${item.iconBg}
+                                        ${item.iconClass}
+                                    `}
+                                >
+                                    <Icon size={25} />
+                                </div>
+                                <div>
+                                    <p className="
+                                        text-xs
+                                        font-semibold
+                                        uppercase
+                                        tracking-[0.14em]
+                                        text-slate-500
+                                    ">
+                                        {item.label}
+                                    </p>
+                                    <p
+                                        className={`
+                                            mt-1
+                                            text-3xl
+                                            font-bold
+                                            ${item.valueClass}
+                                        `}
+                                    >
+                                        {item.value}
+                                    </p>
+                                    <p className="
+                                        mt-1
+                                        text-xs
+                                        text-slate-400
+                                    ">
+                                        {item.description}
+                                    </p>
+                                </div>
+                            </article>
+                        );
+                    })}
+                </section>
+                <section className="
+                    mt-6
+                    rounded-2xl
+                    border
+                    border-slate-200/70
+                    bg-white/95
+                    p-5
+                    shadow-xl
+                    backdrop-blur
+                ">
+                    <div className="
+                        grid
+                        grid-cols-1
+                        items-end
+                        gap-4
+                        md:grid-cols-2
+                        xl:grid-cols-[1.6fr_1fr_1fr_auto]
+                    ">
+                        <div className="flex flex-col gap-2">
+                            <label className="
+                                text-xs
+                                font-medium
+                                text-slate-500
+                            ">
+                                Buscar
+                            </label>
+                            <div className="relative">
+                                <CiSearch
+                                    size={21}
+                                    className="
+                                        absolute
+                                        left-4
+                                        top-1/2
+                                        -translate-y-1/2
+                                        text-slate-400
+                                    "
+                                />
+                                <input
+                                    type="text"
+                                    value={busqueda}
+                                    onChange={(event) =>
+                                        setBusqueda(event.target.value)
+                                    }
+                                    placeholder="Unidad, usuario o tipo de venta..."
+                                    className="
+                                        h-12
+                                        w-full
+                                        rounded-xl
+                                        border
+                                        border-slate-200
+                                        bg-white
+                                        pl-11
+                                        pr-4
+                                        text-sm
+                                        text-slate-700
+                                        outline-none
+                                        transition
+                                        placeholder:text-slate-400
+                                        focus:border-slate-400
+                                        focus:ring-4
+                                        focus:ring-slate-100
+                                    "
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <label className="
+                                text-xs
+                                font-medium
+                                text-slate-500
+                            ">
+                                Piso
+                            </label>
                             <select
                                 value={filtroPiso}
-                                onChange={(e) => setFiltroPiso(e.target.value)}
+                                onChange={(event) =>
+                                    setFiltroPiso(event.target.value)
+                                }
                                 className="
-                                    appearance-none
+                                    h-12
+                                    w-full
                                     rounded-xl
                                     border
-                                    border-black/10
+                                    border-slate-200
                                     bg-white
-                                    py-2.5
-                                    pl-4
-                                    pr-10
+                                    px-4
                                     text-sm
+                                    text-slate-700
                                     outline-none
-                                    transition
-                                    focus:border-[var(--color-naranja)]
-                                "
-                            >
+                            ">
                                 <option value="todos">
                                     Todos los pisos
                                 </option>
-
                                 {pisosDisponibles.map((piso) => (
                                     <option
                                         key={piso}
@@ -176,99 +413,93 @@ function Historial() {
                                     </option>
                                 ))}
                             </select>
-
-                            <span className="
-                                pointer-events-none
-                                absolute
-                                right-3
-                                top-1/2
-                                -translate-y-1/2
-                                text-gray-500
-                            ">
-                                ▼
-                            </span>
                         </div>
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                        <label className="text-sm font-medium text-gray-600">
-                            Tipo de cambio
-                        </label>
-                            <div className="relative w-fit">
+                        <div className="flex flex-col gap-2">
+                            <label className="
+                                text-xs
+                                font-medium
+                                text-slate-500
+                            ">
+                                Tipo de cambio
+                            </label>
                             <select
                                 value={filtroTipo}
-                                onChange={(e) => setFiltroTipo(e.target.value)}
+                                onChange={(event) =>
+                                    setFiltroTipo(event.target.value)
+                                }
                                 className="
-                                    appearance-none
+                                    h-12
+                                    w-full
                                     rounded-xl
                                     border
-                                    border-black/10
+                                    border-slate-200
                                     bg-white
-                                    py-2.5
-                                    pl-4
-                                    pr-10
+                                    px-4
                                     text-sm
+                                    text-slate-700
                                     outline-none
-                                    transition
-                                    focus:border-[var(--color-naranja)]
-                                "
-                            >
+                            ">
                                 <option value="todos">
                                     Todos
                                 </option>
-
                                 <option value="estado">
                                     Estado
                                 </option>
-
                                 <option value="precio">
                                     Precio
                                 </option>
                             </select>
-                            <span className="
-                                pointer-events-none
-                                absolute
-                                right-3
-                                top-1/2
-                                -translate-y-1/2
-                                text-gray-500
-                            ">
-                                ▼
-                            </span>
                         </div>
-                    </div>
-
-                    {(filtroPiso !== "todos" || filtroTipo !== "todos") && (
                         <button
                             type="button"
                             onClick={() => {
+                                setBusqueda("");
                                 setFiltroPiso("todos");
                                 setFiltroTipo("todos");
                             }}
                             className="
+                                flex
+                                h-12
+                                items-center
+                                justify-center
+                                gap-2
                                 rounded-xl
                                 border
-                                border-black/10
-                                px-4
-                                py-2.5
+                                border-slate-200
+                                bg-white
+                                px-5
                                 text-sm
                                 font-medium
-                                text-gray-600
+                                text-slate-600
                                 transition
-                                hover:bg-zinc-50
-                            "
-                        >
-                            Limpiar filtros
+                                hover:bg-slate-50
+                        ">
+                            <CiRedo size={20} />
+                            Limpiar
                         </button>
-                    )}
-
-                </div>
-                <div className="
+                    </div>
+                </section>
+                <section className="
+                    mt-6
                     overflow-hidden
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white/95
+                    shadow-[0_10px_35px_rgba(15,23,42,0.06)]
+                    backdrop-blur
                 ">
-                    <div className="max-w-7xl mx-auto border border-slate-200 rounded-2xl overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="text-slate-900 text-sm font-semibold border-b border-slate-300 whitespace-nowrap">
+                    <div className="overflow-x-auto">
+                        <table className="w-full min-w-[1100px] border-collapse">
+                            <thead className="
+                                whitespace-nowrap
+                                border-b
+                                border-slate-200
+                                bg-slate-50/80
+                                text-sm
+                                font-semibold
+                                text-slate-900
+                            ">
                                 <tr className="bg-slate-50">
                                     <th scope="col" className="table-header">
                                         Piso
@@ -299,8 +530,11 @@ function Historial() {
                                 {historialFiltrado.map((registro) => (
                                     <tr
                                         key={`${registro.tipo}-${registro.id}`}
-                                        className="hover:bg-slate-50 text-center"
-                                    >
+                                        className="
+                                            text-center
+                                            transition
+                                            hover:bg-slate-100/80
+                                    ">
                                         <td className="table-body">
                                             {registro.numero_piso}°
                                         </td>
@@ -479,7 +713,7 @@ function Historial() {
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </section>
             </div>
         </main>
     );

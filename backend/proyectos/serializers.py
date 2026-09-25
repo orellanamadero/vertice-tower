@@ -21,8 +21,8 @@ class EmpresaSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "nameEmpresa",
-            "logo1",
-            "logo2",
+            "logoEmpresa",
+            "faviconEmpresa",
             "celular",
             "correo",
             "whatsapp",
@@ -58,7 +58,8 @@ class ProyectoSerializer(serializers.ModelSerializer):
             "id",
             "empresa",
             "nombreProyecto",
-            "logo",
+            "logoProyecto",
+            "faviconProyecto",
             "descripcion",
             "estado",
             "brochure",
@@ -82,7 +83,7 @@ class ProyectoBaseSerializer(serializers.ModelSerializer):
             "id",
             "empresa",
             "nombreProyecto",
-            "logo",
+            "logoProyecto",
             "descripcion",
             "estado",
             "brochure",
@@ -119,7 +120,7 @@ class ProyectoHeroSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "nombreProyecto",
-            "logo",
+            "logoProyecto",
             "hero",
         ]
 

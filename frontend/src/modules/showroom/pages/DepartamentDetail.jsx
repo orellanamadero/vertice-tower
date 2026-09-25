@@ -327,7 +327,6 @@ function DepartmentDetail() {
                         shadow-xl
                         transition
                         hover:bg-slate-900
-
                         lg:left-9
                         lg:top-25
                         lg:h-12

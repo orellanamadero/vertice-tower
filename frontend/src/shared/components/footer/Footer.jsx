@@ -34,7 +34,7 @@ function Footer({ project }) {
                     className="
                         text-center
                         text-[10px]
-                        text-white
+                        text-white/70
                         md:text-xs
                     "
                 >
@@ -47,7 +47,7 @@ function Footer({ project }) {
                         className="
                             text-center
                             text-[10px]
-                            text-white
+                            text-white/70
                             md:text-xs
                         "
                     >
@@ -61,7 +61,7 @@ function Footer({ project }) {
                             rel="noopener noreferrer"
                             aria-label="WhatsApp"
                             className="
-                                text-white
+                                text-white/70
                                 transition
                                 hover:scale-110
                                 hover:text-[var(--color-naranja)]
@@ -78,7 +78,7 @@ function Footer({ project }) {
                             rel="noopener noreferrer"
                             aria-label="Facebook"
                             className="
-                                text-white
+                                text-white/70
                                 transition
                                 hover:scale-110
                                 hover:text-[var(--color-naranja)]

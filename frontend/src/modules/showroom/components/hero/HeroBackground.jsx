@@ -1,11 +1,6 @@
-import {
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { useEffect, useRef, useState,} from "react";
 
 const TRANSITION_DURATION = 700;
-
 function HeroBackground({
     desktopVideo,
     nextVideo,
@@ -241,8 +236,7 @@ function HeroBackground({
                 z-0
                 overflow-hidden
                 bg-black
-            "
-        >
+        ">
             <video
                 ref={videoARef}
                 playsInline
@@ -292,6 +286,52 @@ function HeroBackground({
 
                     ${
                         activeSlot === "B"
+                            ? "opacity-100"
+                            : "opacity-0"
+                    }
+                `}
+            />
+
+            <div
+                className={`
+                    pointer-events-none
+                    absolute
+                    inset-0
+                    z-10
+                    bg-gradient-to-b
+                    from-black/15
+                    via-black/25
+                    to-black/55
+
+                    transition-opacity
+                    duration-700
+                    ease-in-out
+
+                    ${
+                        activeSlot === "A"
+                            ? "opacity-100"
+                            : "opacity-0"
+                    }
+                `}
+            />
+
+            <div
+                className={`
+                    pointer-events-none
+                    absolute
+                    inset-0
+                    z-10
+                    bg-gradient-to-r
+                    from-black/25
+                    via-transparent
+                    to-black/25
+
+                    transition-opacity
+                    duration-700
+                    ease-in-out
+
+                    ${
+                        activeSlot === "A"
                             ? "opacity-100"
                             : "opacity-0"
                     }

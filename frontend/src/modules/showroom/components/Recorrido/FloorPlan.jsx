@@ -39,7 +39,6 @@ function FloorPlan({ project, floor }) {
                     items-center
                     justify-center
             ">
-
                 <div
                     className="
                         relative
