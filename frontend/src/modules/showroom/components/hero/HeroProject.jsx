@@ -17,6 +17,8 @@ function HeroProject({ project }) {
 
     const currentStage = stages[stage];
     const nextStage = stages[stage + 1];
+    
+    console.log("PROJECT COMPLETO:", project);
 
     const isLastStage = stages.length > 0 && stage === stages.length - 1;
     useEffect(() => {
@@ -200,8 +202,8 @@ function HeroProject({ project }) {
                         </AnimatePresence>
                         {stage === 0 && (
                             <img
-                                src={project.empresa?.logoEmpresa}
-                                alt={project.empresa?.nombreEmpresa || "Madero SRL"}
+                                src={project.logoProyecto}
+                                alt={project.nombreProyecto || "Madero SRL"}
                                 className="
                                     absolute
                                     right-6
