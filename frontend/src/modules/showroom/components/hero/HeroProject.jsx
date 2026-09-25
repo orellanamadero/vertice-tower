@@ -201,7 +201,7 @@ function HeroProject({ project }) {
                         {stage === 0 && (
                             <img
                                 src={project.empresa?.logoEmpresa}
-                                alt={project.empresa.nameEmpresa}
+                                alt={project.empresa?.nombreEmpresa || "Madero SRL"}
                                 className="
                                     absolute
                                     right-6
