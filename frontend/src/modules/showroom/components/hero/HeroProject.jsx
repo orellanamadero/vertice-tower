@@ -200,8 +200,8 @@ function HeroProject({ project }) {
                         </AnimatePresence>
                         {stage === 0 && (
                             <img
-                                src={project.logoProyecto}
-                                alt={project.nombreProyecto}
+                                src={project.logoEmpresa}
+                                alt={project.nameEmpresa}
                                 className="
                                     absolute
                                     right-6
