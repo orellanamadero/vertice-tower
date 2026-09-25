@@ -21,9 +21,7 @@ function NavbarProject({ project }) {
 
     const location = useLocation();
 
-    const navbarTransparente =
-        location.pathname === "/" ||
-        location.pathname.startsWith("/recorrido");
+    const navbarTransparente = location.pathname === "/"
 
     const empresa = project?.empresa;
 
