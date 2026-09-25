@@ -10,20 +10,10 @@ from .models import (
     HistorialPrecioUnidad,
 )
 
-
-# =========================================================
-# INLINE: IMÁGENES DE TIPO DE UNIDAD
-# =========================================================
-
 class ImageTipoUnidadInline(admin.TabularInline):
     model = ImageTipoUnidad
     extra = 1
     fields = ("image",)
-
-
-# =========================================================
-# INLINE: UNIDADES DE UN PISO
-# =========================================================
 
 class UnidadInline(admin.TabularInline):
     model = Unidad
@@ -36,11 +26,6 @@ class UnidadInline(admin.TabularInline):
         "moneda",
     )
 
-
-# =========================================================
-# CATEGORÍA
-# =========================================================
-
 @admin.register(CategoriaUnidad)
 class CategoriaUnidadAdmin(admin.ModelAdmin):
 
@@ -52,11 +37,6 @@ class CategoriaUnidadAdmin(admin.ModelAdmin):
     search_fields = (
         "nombre",
     )
-
-
-# =========================================================
-# TIPO DE UNIDAD
-# =========================================================
 
 @admin.register(TipoUnidad)
 class TipoUnidadAdmin(admin.ModelAdmin):
@@ -87,11 +67,6 @@ class TipoUnidadAdmin(admin.ModelAdmin):
         ImageTipoUnidadInline,
     ]
 
-
-# =========================================================
-# PISO
-# =========================================================
-
 @admin.register(Piso)
 class PisoAdmin(admin.ModelAdmin):
 
@@ -114,11 +89,6 @@ class PisoAdmin(admin.ModelAdmin):
         UnidadInline,
     ]
 
-
-# =========================================================
-# IMÁGENES DE TIPO DE UNIDAD
-# =========================================================
-
 @admin.register(ImageTipoUnidad)
 class ImageTipoUnidadAdmin(admin.ModelAdmin):
 
@@ -131,11 +101,6 @@ class ImageTipoUnidadAdmin(admin.ModelAdmin):
     list_filter = (
         "tipoUnidad",
     )
-
-
-# =========================================================
-# UNIDAD
-# =========================================================
 
 @admin.register(Unidad)
 class UnidadAdmin(admin.ModelAdmin):
@@ -162,10 +127,6 @@ class UnidadAdmin(admin.ModelAdmin):
     )
 
 
-# =========================================================
-# HISTORIAL DE ESTADOS
-# =========================================================
-
 @admin.register(HistorialEstadoUnidad)
 class HistorialEstadoUnidadAdmin(admin.ModelAdmin):
 
@@ -187,11 +148,17 @@ class HistorialEstadoUnidadAdmin(admin.ModelAdmin):
     readonly_fields = (
         "fecha",
     )
+    def get_readonly_fields(self, request, obj=None):
+        return [field.name for field in self.model._meta.fields]
 
+    def has_add_permission(self, request):
+        return False
 
-# =========================================================
-# HISTORIAL DE PRECIOS
-# =========================================================
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 @admin.register(HistorialPrecioUnidad)
 class HistorialPrecioUnidadAdmin(admin.ModelAdmin):
@@ -212,3 +179,69 @@ class HistorialPrecioUnidadAdmin(admin.ModelAdmin):
     readonly_fields = (
         "fecha",
     )
+    def get_readonly_fields(self, request, obj=None):
+        return [field.name for field in self.model._meta.fields]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+from django.contrib import admin
+from django.utils.html import format_html
+
+from .models import HistorialVentaUnidad
+
+
+@admin.register(HistorialVentaUnidad)
+class HistorialVentaUnidadAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "unidad",
+        "tipo_venta",
+        "usuario",
+        "fecha",
+        "documento",
+    )
+
+    list_filter = (
+        "tipoVenta",
+        "fecha",
+    )
+
+    search_fields = (
+        "unidad__id",
+        "usuario__username",
+    )
+
+    ordering = ("-fecha",)
+
+    def tipo_venta(self, obj):
+        return obj.get_tipoVenta_display() if obj.tipoVenta else "-"
+    tipo_venta.short_description = "Tipo de venta"
+
+    def documento(self, obj):
+        if obj.documentoVenta:
+            return format_html(
+                '<a href="{}" target="_blank">Ver documento</a>',
+                obj.documentoVenta.url
+            )
+        return "-"
+    documento.short_description = "Documento"
+
+    # SOLO LECTURA
+    def get_readonly_fields(self, request, obj=None):
+        return [field.name for field in self.model._meta.fields]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
