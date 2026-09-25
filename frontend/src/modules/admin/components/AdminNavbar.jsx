@@ -60,7 +60,7 @@ function AdminNavbar({ proyecto }) {
                 {logo && (
                     <img
                         src={logo}
-                        alt={proyecto.empresa.nombre}
+                        alt={proyecto?.empresa?.nombre || "Empresa"}
                         className="h-9 w-auto md:h-10"
                     />
                 )}
