@@ -4,10 +4,8 @@ import logo from "../../../modules/showroom/images/BLANCO.webp";
 
 const menuItems = [
     { label: "Home", path: "/" },
-    { label: "Nosotros", path: "/nosotros" },
     { label: "Recorrido", path: "/recorrido" },
     { label: "Amenidades", path: "/amenidades" },
-    { label: "Avances", path: "/avances" },
     { label: "Ubicación", path: "/ubicacion" },
     { label: "Contáctanos", path: "/contacto" },
 ];
