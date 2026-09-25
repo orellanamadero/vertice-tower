@@ -48,12 +48,12 @@ class Proyecto(models.Model):
         max_length=150
     )
     logoProyecto = models.ImageField(
-        upload_to="pro+yecto/logo/",
+        upload_to="proyecto/logo/",
         blank=True,
         null=True
     )
     faviconProyecto = models.ImageField(
-        upload_to="pro+yecto/logo/",
+        upload_to="proyecto/logo/",
         blank=True,
         null=True
     )

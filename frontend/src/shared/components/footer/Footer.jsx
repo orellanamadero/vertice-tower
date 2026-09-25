@@ -56,7 +56,7 @@ function Footer({ project }) {
 
                     {empresa?.whatsapp && (
                         <a
-                            href={empresa.whatsapp}
+                            href="https://wa.link/a6rzle"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="WhatsApp"
@@ -73,7 +73,7 @@ function Footer({ project }) {
 
                     {empresa?.facebook && (
                         <a
-                            href={empresa.facebook}
+                            href="https://www.facebook.com/share/1YFvFihXCn/"
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label="Facebook"

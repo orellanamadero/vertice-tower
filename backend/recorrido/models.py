@@ -5,22 +5,22 @@ from proyectos.models import Proyecto
 from django.core.exceptions import ValidationError
 
 def piso_image_path(instance, filename):
-    return f"pisos/{instance.numero}/{filename}"
+    return f"proyecto/pisos/{instance.numero}/{filename}"
 
 def unidad_render_path(instance, filename):
-    return f"unidades/{instance.codigo}/render/{filename}"
+    return f"proyecto/unidades/{instance.codigo}/render/{filename}"
 
 def unidad_plano_path(instance, filename):
-    return f"unidades/{instance.codigo}/plano/{filename}"
+    return f"proyecto/unidades/{instance.codigo}/plano/{filename}"
 
 def unidad_frame_path(instance, filename):
-    return f"unidades/{instance.codigo}/frame/{filename}"
+    return f"proyecto/unidades/{instance.codigo}/frame/{filename}"
 
 def unidad_galeria_path(instance, filename):
-    return f"unidades/{instance.tipoUnidad.codigo}/galeria/{filename}"
+    return f"proyecto/unidades/{instance.tipoUnidad.codigo}/galeria/{filename}"
 
 def tipo_unidad_ficha_path(instance, filename):
-    return f"unidades/{instance.codigo}/ficha/{filename}"
+    return f"proyecto/unidades/{instance.codigo}/ficha/{filename}"
 
 class CategoriaUnidad(models.Model):
     nombre = models.CharField(
@@ -204,7 +204,7 @@ class Unidad(models.Model):
         blank=True,
     )
     documentoVenta = models.FileField(
-        upload_to="proyectos/ventas/",
+        upload_to="proyecto/ventas/",
         null=True,
         blank=True,
     ) 
@@ -304,7 +304,7 @@ class HistorialVentaUnidad(models.Model):
         blank=True,
     )
     documentoVenta = models.FileField(
-        upload_to="proyectos/historial_ventas/"
+        upload_to="proyecto/historial_ventas/"
     )
     usuario = models.ForeignKey(
         User,

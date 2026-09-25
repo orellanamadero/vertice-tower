@@ -40,6 +40,8 @@ services:
       - static_volume:/app/staticfiles:ro
       - media_volume:/app/media:ro
 
+      - /srv/vertice-tours:/app/tours:ro
+
 volumes:
   postgres_data:
   static_volume:
