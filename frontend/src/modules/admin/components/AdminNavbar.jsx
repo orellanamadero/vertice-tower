@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import { apiFetch } from "../services/api";
+import logo from "../../showroom/images/BLANCO.webp";
 
 function AdminNavbar({ proyecto }) {
     const navigate = useNavigate();
@@ -56,9 +57,9 @@ function AdminNavbar({ proyecto }) {
                     md:px-6
                     md:py-4
             ">
-                {proyecto?.empresa?.logo1 && (
+                {logo && (
                     <img
-                        src={proyecto.empresa.logo1}
+                        src={logo}
                         alt={proyecto.empresa.nombre}
                         className="h-9 w-auto md:h-10"
                     />
