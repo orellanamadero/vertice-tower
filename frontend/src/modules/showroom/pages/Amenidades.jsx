@@ -48,7 +48,7 @@ function Amenidades() {
     if (loading) {
         return (
             <main className="flex min-h-screen items-center justify-center">
-                <p>Cargando amenidades...</p>
+                <p>Amenidades de Vertice Tower</p>
             </main>
         );
     }
@@ -56,7 +56,7 @@ function Amenidades() {
     if (amenidades.length === 0) {
         return (
             <main className="flex min-h-screen items-center justify-center">
-                <p>No se encontraron amenidades disponibles.</p>
+                <p>Estamos preparando la información de nuestras amenidades.</p>
             </main>
         );
     }
