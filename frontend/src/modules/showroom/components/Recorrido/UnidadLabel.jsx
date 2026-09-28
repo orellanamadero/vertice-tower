@@ -50,7 +50,32 @@ function UnidadLabel({ unidad, width, height, onClick }) {
                 }}
             />
             <span>
-                {unidad.piso} - {unidad.codigo}
+                {unidad.esAreaComun ? (
+                    <span>
+                        {unidad.nombre}
+                    </span>
+                ) : (
+                    <>
+                        <span
+                            className={`
+                                h-2
+                                w-2
+                                rounded-full
+                                ${
+                                    unidad.estado === 1
+                                        ? "bg-green-500"
+                                        : unidad.estado === 2
+                                            ? "bg-red-500"
+                                            : "bg-yellow-500"
+                                }
+                            `}
+                        />
+
+                        <span>
+                            {unidad.piso} - {unidad.codigo}
+                        </span>
+                    </>
+                )}
             </span>
         </div>
     );

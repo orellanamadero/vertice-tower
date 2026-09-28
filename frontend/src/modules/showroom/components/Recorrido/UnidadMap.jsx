@@ -141,7 +141,10 @@ function UnidadMap({ floor, project, size }) {
                             y: tipoUnidad.y,
                             piso: floor.numero,
                             codigo: tipoUnidad.codigo,
+                            nombre: tipoUnidad.nombre,
                             estado: unit.estado,
+                            esAreaComun:
+                                tipoUnidad.categoriaNombre === "AREA COMUN",
                         }}
                         width={width}
                         height={height}
