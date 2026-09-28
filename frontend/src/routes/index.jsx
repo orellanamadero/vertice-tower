@@ -8,9 +8,7 @@ import ProjectLayout from "../layouts/ProjectLayout";
 import HomeProject from "../modules/showroom/pages/HomeProject";
 import Recorrido from "../modules/showroom/pages/Recorrido";
 import DepartamentDetail from "../modules/showroom/pages/DepartamentDetail";
-import NosotrosProject from "../modules/showroom/pages/NosotrosProject";
 import Amenidades from "../modules/showroom/pages/Amenidades";
-import Avances from "../modules/showroom/pages/Avances";
 import Ubicacion from "../modules/showroom/pages/Ubicacion";
 import ContactoProject from "../modules/showroom/pages/ContactoProject";
 import Login from "../modules/admin/pages/Login";
@@ -60,16 +58,8 @@ function AppRoutes() {
                         element={<DepartamentDetail />}
                     />
                     <Route
-                        path="/nosotros"
-                        element={<NosotrosProject />}
-                    />
-                    <Route
                         path="/amenidades"
                         element={<Amenidades />}
-                    />
-                    <Route
-                        path="/avances"
-                        element={<Avances />}
                     />
                     <Route
                         path="/ubicacion"
