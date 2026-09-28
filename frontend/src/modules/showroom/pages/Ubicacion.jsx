@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { getUbicacion } from "../../../services/api";
 
 function Ubicacion() {
@@ -54,6 +55,20 @@ function Ubicacion() {
     }
 
     return (
+        <>
+            <Helmet>
+                <title>Ubicación | Vértice Tower</title>
+
+                <meta
+                    name="description"
+                    content="Descubre la ubicación de Vértice Tower y conoce su entorno, accesos y principales puntos de referencia."
+                />
+
+                <link
+                    rel="canonical"
+                    href="https://maderosrl.com/ubicacion"
+                />
+            </Helmet>
         <main
             className="
                 relative
@@ -134,6 +149,7 @@ function Ubicacion() {
                 />
             </section>
         </main>
+        </>
     );
 }
 export default Ubicacion;

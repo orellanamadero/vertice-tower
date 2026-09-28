@@ -1,6 +1,7 @@
 import { HeroProject } from "../components/hero";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { getProyectoHero } from "../../../services/api";
 
 function HomeProject() {
@@ -26,10 +27,26 @@ function HomeProject() {
         );
     }
     return (
-        <HeroProject
-            project={project}
-            empresa={projectBase?.empresa}
-        />
+        <>
+            <Helmet>
+                <title>Vertice Tower | Madero SRL</title>
+
+                <meta
+                    name="description"
+                    content="Descubre Vértice Tower, sus departamentos, amenidades, recorridos virtuales y ubicación."
+                />
+
+                <link
+                    rel="canonical"
+                    href="https://maderosrl.com/"
+                />
+            </Helmet>
+            <HeroProject
+                project={project}
+                empresa={projectBase?.empresa}
+            />
+        </>
+        
     );
 }
 export default HomeProject;

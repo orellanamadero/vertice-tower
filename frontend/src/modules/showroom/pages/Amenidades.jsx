@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { getProyectoRecorrido } from "../../../services/api";
 import Recorrido360 from "../components/Recorrido/Recorrido360";
 
@@ -62,6 +63,18 @@ function Amenidades() {
     }
 
     return (
+        <>
+        <Helmet>
+            <title>Amenidades | Vértice Tower</title>
+            <meta
+                name="description"
+                content="Conoce las amenidades y áreas comunes de Vértice Tower: espacios diseñados para disfrutar, reunirse, entrenar y compartir."
+            />
+            <link
+                rel="canonical"
+                href="https://maderosrl.com/amenidades"
+            />
+        </Helmet>
         <main className="relative h-screen w-full overflow-hidden bg-black">
             <Recorrido360
                 src={selectedAmenidad.tipoUnidad.tour360}
@@ -117,6 +130,7 @@ function Amenidades() {
                 })}
             </div>
         </main>
+        </>
     );
 }
 

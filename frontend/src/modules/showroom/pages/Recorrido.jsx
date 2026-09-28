@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import {getProyectoRecorrido,getProyectoRecorridoCache,} from "../../../services/api";
 import FloorPlan from "../components/Recorrido/FloorPlan";
 import { MdKeyboardArrowDown } from "react-icons/md";
@@ -158,6 +159,20 @@ function Recorrido() {
     }
 
     return (
+        <>
+            <Helmet>
+                <title>Departamentos disponibles | Vértice Tower</title>
+
+                <meta
+                    name="description"
+                    content="Explora los departamentos disponibles de Vértice Tower, revisa pisos, tipologías, ubicación y disponibilidad de unidades."
+                />
+
+                <link
+                    rel="canonical"
+                    href="https://maderosrl.com/recorrido"
+                />
+            </Helmet>
         <main
             className="
                 relative
@@ -436,6 +451,7 @@ function Recorrido() {
                 </section>
             </div>
         </main>
+        </>
     );
 }
 export default Recorrido;
