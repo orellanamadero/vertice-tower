@@ -95,7 +95,7 @@ function Contacto() {
     return (
         <>
         <Helmet>
-            <title>Contacto  | Vertice Tower</title>
+            <title>Vertice Tower | Contacto</title>
 
             <meta
                 name="description"

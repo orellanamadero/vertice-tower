@@ -57,7 +57,7 @@ function Ubicacion() {
     return (
         <>
             <Helmet>
-                <title>Ubicación | Vertice Tower</title>
+                <title>Vertice Tower | Ubicación</title>
 
                 <meta
                     name="description"

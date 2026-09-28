@@ -65,7 +65,7 @@ function Amenidades() {
     return (
         <>
         <Helmet>
-            <title>Amenidades | Vertice Tower</title>
+            <title>Vertice Tower | Amenidades</title>
             <meta
                 name="description"
                 content="Conoce las amenidades y áreas comunes de Vértice Tower: espacios diseñados para disfrutar, reunirse, entrenar y compartir."
