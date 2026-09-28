@@ -10,13 +10,18 @@ function obtenerPisoInicial(project, floorId) {
     if (!project?.pisos?.length) {
         return null;
     }
-    return (
-        project.pisos.find(
-            (piso) =>
-                piso.id === Number(floorId)
-        ) ||
-        project.pisos[0]
+
+    const pisoPorId = project.pisos.find(
+        (piso) => piso.id === Number(floorId)
     );
+
+    if (pisoPorId) {
+        return pisoPorId;
+    }
+
+    return [...project.pisos].sort(
+        (a, b) => Number(b.numero) - Number(a.numero)
+    )[0];
 }
 function Recorrido() {
     const location = useLocation();
