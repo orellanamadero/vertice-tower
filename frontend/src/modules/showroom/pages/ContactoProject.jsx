@@ -95,7 +95,7 @@ function Contacto() {
     return (
         <>
         <Helmet>
-            <title>Contacto | Madero SRL</title>
+            <title>Contacto  | Vertice Tower</title>
 
             <meta
                 name="description"

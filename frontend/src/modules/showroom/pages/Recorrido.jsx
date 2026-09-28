@@ -161,7 +161,7 @@ function Recorrido() {
     return (
         <>
             <Helmet>
-                <title>Departamentos disponibles | Vértice Tower</title>
+                <title>Recorrido | Vertice Tower</title>
 
                 <meta
                     name="description"
