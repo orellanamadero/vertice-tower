@@ -53,8 +53,6 @@ function Footer({ project }) {
                     >
                         Plataforma desarrollada por nuestro equipo.
                     </p>
-
-                    {empresa?.whatsapp && (
                         <a
                             href="https://wa.link/a6rzle"
                             target="_blank"
@@ -69,9 +67,6 @@ function Footer({ project }) {
                         >
                             <FaWhatsapp className="size-3 md:size-4" />
                         </a>
-                    )}
-
-                    {empresa?.facebook && (
                         <a
                             href="https://www.facebook.com/share/1YFvFihXCn/"
                             target="_blank"
@@ -86,7 +81,6 @@ function Footer({ project }) {
                         >
                             <FiFacebook className="size-3 md:size-4" />
                         </a>
-                    )}
                 </div>
             </div>
         </footer>
