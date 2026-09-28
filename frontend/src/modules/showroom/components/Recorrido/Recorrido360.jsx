@@ -32,7 +32,7 @@ function Recorrido360({ src, title }) {
                     bg-black
 
                     transition-opacity
-                    duration-800
+                    duration-1500
 
                     ${
                         loading
@@ -90,7 +90,7 @@ function Recorrido360({ src, title }) {
                             w-1.5
                             animate-pulse
                             rounded-full
-                            bg-white
+                            bg-black
                         "
                     />
                     <span
@@ -99,8 +99,8 @@ function Recorrido360({ src, title }) {
                             w-1.5
                             animate-pulse
                             rounded-full
-                            bg-white/70
-                            [animation-delay:250ms]
+                            bg-black/70
+                            [animation-delay:750ms]
                         "
                     />
                     <span
@@ -109,8 +109,8 @@ function Recorrido360({ src, title }) {
                             w-1.5
                             animate-pulse
                             rounded-full
-                            bg-white/40
-                            [animation-delay:400ms]
+                            bg-black/40
+                            [animation-delay:950ms]
                         "
                     />
 
