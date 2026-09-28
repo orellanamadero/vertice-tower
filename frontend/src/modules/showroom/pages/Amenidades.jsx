@@ -83,8 +83,7 @@ function Amenidades() {
             <div
                 className="
                     absolute
-                    bottom-15
-                    md:bottom-9
+                    bottom-22
                     left-1/2
                     z-20
                     flex

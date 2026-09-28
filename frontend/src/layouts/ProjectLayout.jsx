@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
 import NavbarProject from "../shared/components/navbar/NavbarProject";
 import Footer from "../shared/components/footer/Footer";
@@ -8,6 +8,7 @@ import { getProyectoBase } from "../services/api";
 function ProjectLayout() {
     const [project, setProject] = useState(null);
     const [hideFooter, setHideFooter] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         const cargarProyecto = async () => {
@@ -24,6 +25,7 @@ function ProjectLayout() {
 
         cargarProyecto();
     }, []);
+    const ocultarFooter = hideFooter || location.pathname === "/amenidades";
 
     return (
         <div className="relative flex min-h-screen flex-col">
@@ -36,9 +38,9 @@ function ProjectLayout() {
                     }}
                 />
             </main>
-            {!hideFooter && (
-                <Footer project={project} />
-            )}
+                {!ocultarFooter && (
+                    <Footer project={project} />
+                )}
         </div>
     );
 }
