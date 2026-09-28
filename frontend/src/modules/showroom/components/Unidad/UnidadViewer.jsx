@@ -8,9 +8,6 @@ function UnidadViewer({ view, unit }) {
     const [previousIndex, setPreviousIndex] = useState(null);
     const [isFading, setIsFading] = useState(false);
     const gallery = unit?.tipoUnidad?.galeria || [];
-    const tourUrl = unit.tipoUnidad.tour360
-        ? `/tours/${unit.tipoUnidad.tour360}`
-        : null;
     const changeGallery = (newIndex) => {
         setPreviousIndex(galleryIndex);
         setGalleryIndex(newIndex);
@@ -265,9 +262,9 @@ function UnidadViewer({ view, unit }) {
                 </div>
             )}
 
-            {view === "tour" && tourUrl && (
+            {view === "tour" && (
                 <Recorrido360
-                    src={tourUrl}
+                    src={unit.tipoUnidad.tour360}
                     title={`Recorrido 360° - ${unit.tipoUnidad.nombre}`}
                 />
             )}
