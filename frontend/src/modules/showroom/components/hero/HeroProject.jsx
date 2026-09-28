@@ -17,8 +17,6 @@ function HeroProject({ project, empresa }) {
 
     const currentStage = stages[stage];
     const nextStage = stages[stage + 1];
-    
-    console.log("PROJECT COMPLETO:", project);
 
     const isLastStage = stages.length > 0 && stage === stages.length - 1;
     useEffect(() => {
@@ -179,8 +177,8 @@ function HeroProject({ project, empresa }) {
                                         y: 10,
                                     }}
                                     transition={{
-                                        duration: 0.5,
-                                        ease: [0.22, 1, 0.36, 1],
+                                        duration: 0.9,
+                                        ease: [0.22, 1, 0.86, 1],
                                     }}
                                 >
                                     <button
@@ -200,30 +198,30 @@ function HeroProject({ project, empresa }) {
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                        {stage === 0 && empresa?.logoEmpresa && (
-                            <img
-                                src={empresa.logoEmpresa}
-                                alt={empresa?.nombreEmpresa || "Madero SRL"}
-                                className="
-                                    absolute
-                                    right-6
-                                    block
-                                    h-10
-                                    w-auto
-                                    object-contain
-                                    brightness-0
-                                    invert
-                                    md:bottom-8
-                                    md:h-16
-                                    bottom-15
-                                    lg:right-12
-                                    lg:h-20
-                                "
-                            />
-                        )}
                     </motion.div>
                 </AnimatePresence>
             </div>
+            {stage === 0 && empresa?.logoEmpresa && (
+            <img
+                src={empresa.logoEmpresa}
+                alt={empresa?.nombreEmpresa || "Madero SRL"}
+                className="
+                    absolute
+                    right-6
+                    block
+                    h-10
+                    w-auto
+                    object-contain
+                    brightness-0
+                    invert
+                    md:bottom-8
+                    md:h-16
+                    bottom-15
+                    lg:right-12
+                    lg:h-20
+                "
+            />
+            )}
         </section>
     );
 }

@@ -23,7 +23,14 @@ function UnidadMap({ floor, project, size }) {
                 return "#94a3b8";
         }
     };
-
+    const pulseUnitIds = units
+        .filter(
+            (unit) =>
+                unit.estado === 1 ||
+                unit.tipoUnidad?.categoriaNombre === "AREA COMUN"
+        )
+        .map((unit) => unit.id);
+    const pulseUnitsKey = pulseUnitIds.join("-");
     const handleUnitClick = (unit) => {
         if (!unit || unit.estado !== 1) {
             return;
@@ -32,34 +39,28 @@ function UnidadMap({ floor, project, size }) {
             `/recorrido/${floor.id}/${unit.tipoUnidad.codigo}`
         );
     };
-
     useEffect(() => {
-        const availableUnits = units.filter(
-            unit => unit.estado === 1
-        );
-        if (availableUnits.length === 0) {
+        if (pulseUnitIds.length === 0) {
             setPulseUnit(null);
             return;
         }
         let index = 0;
         setPulseUnit(
-            availableUnits[0].id
+            pulseUnitIds[0]
         );
         const interval = setInterval(() => {
             index =
                 (index + 1) %
-                availableUnits.length;
-            setPulseUnit(
-                availableUnits[index].id
-            );
+                pulseUnitIds.length;
+            const id = pulseUnitIds[index];
+            setPulseUnit(id);
         }, 1500);
         return () => {
             clearInterval(interval);
         };
-    }, [floor.id, units]);
-
+    }, [floor.id, pulseUnitsKey]);
     return (
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 overflow-visible">
             <svg
                 viewBox={`0 0 ${width} ${height}`}
                 preserveAspectRatio="none"
@@ -68,6 +69,7 @@ function UnidadMap({ floor, project, size }) {
                     inset-0
                     h-full
                     w-full
+                    overflow-visible
             ">
                 {units.map((unit) => {
                     const path =
