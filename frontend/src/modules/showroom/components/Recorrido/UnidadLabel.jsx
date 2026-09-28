@@ -24,11 +24,14 @@ function UnidadLabel({ unidad, width, height, onClick }) {
                 items-center
                 gap-2
                 rounded-full
-                bg-white/90
+                bg-black/70
                 px-3
                 py-1
+                font-normal
+                text-white
                 text-[10px]
                 shadow-xl
+                backdrop-blur-md
                 whitespace-nowrap
                 cursor-pointer
                 md:text-sm

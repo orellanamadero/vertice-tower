@@ -3,9 +3,11 @@ import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import {getProyectoRecorrido,getProyectoRecorridoCache,} from "../../../services/api";
 import FloorPlan from "../components/Recorrido/FloorPlan";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardArrowDown, MdKeyboardArrowRight } from "react-icons/md";
 import fondo from "../images/fondo.webp";
 import logo from "../images/BLANCO.webp";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaHandPointUp } from "react-icons/fa";
 
 function obtenerPisoInicial(project, floorId) {
     if (!project?.pisos?.length) {
@@ -30,13 +32,32 @@ function Recorrido() {
     const cachedProject = getProyectoRecorridoCache();
     const [project, setProject] = useState(cachedProject);
     const [loading, setLoading] = useState(!cachedProject);
+    const [showIntro, setShowIntro] = useState(() => {
+        return localStorage.getItem("vertice-recorrido-intro-visto") !== "true";
+    });
+    const [showSwipeHint, setShowSwipeHint] = useState(false);
+    const [hasHorizontalScroll, setHasHorizontalScroll] = useState(false);
     const [selectedFloor, setSelectedFloor] = useState(() => obtenerPisoInicial(
         cachedProject,
         floorId)
     );
+    const handleAcceptIntro = () => {
+
+        localStorage.setItem(
+            "vertice-recorrido-intro-visto",
+            "true"
+        );
+
+        setShowIntro(false);
+
+        setShowSwipeHint(true);
+
+        setTimeout(() => {
+            setShowSwipeHint(false);
+        }, 3500);
+    };
 
     const [showFloors, setShowFloors] = useState(false);
-    const [showHint, setShowHint] = useState(true);
 
     useEffect(() => {
         let cancelled = false;
@@ -192,7 +213,7 @@ function Recorrido() {
                     w-full
                     overflow-hidden
             ">
-                {showHint && (
+                {showIntro && (
                     <div
                         role="dialog"
                         aria-modal="true"
@@ -248,7 +269,7 @@ function Recorrido() {
                                 text-sm
                                 text-white
                         ">
-                            Desliza y toca un departamento disponible para conocer sus detalles.
+                            Desliza hacia la izquierda y toca un departamento disponible.
                         </p>
                         <div
                             className="
@@ -261,48 +282,10 @@ function Recorrido() {
                                 text-white/90
                                 md:text-sm
                         ">
-                            <div className="flex items-center gap-2">
-                                <span
-                                    className="
-                                        h-2.5
-                                        w-2.5
-                                        rounded-full
-                                        bg-[var(--color-verde)]
-                                        shadow-sm
-                                    "
-                                />
-                                <span>Disponible</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span
-                                    className="
-                                        h-2.5
-                                        w-2.5
-                                        rounded-full
-                                        bg-[var(--color-rojo)]
-                                        shadow-sm
-                                    "
-                                />
-                                <span>Vendido</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span
-                                    className="
-                                        h-2.5
-                                        w-2.5
-                                        rounded-full
-                                        bg-[var(--color-yellow)]
-                                        shadow-sm
-                                    "
-                                />
-                                <span>Reservado</span>
-                            </div>
                         </div>
                         <button
                             type="button"
-                            onClick={() =>
-                                setShowHint(false)
-                            }
+                            onClick={handleAcceptIntro}
                             className="
                                 mt-5
                                 rounded-lg
@@ -322,13 +305,176 @@ function Recorrido() {
                         </button>
                     </div>
                 )}
+                <div
+                    className="
+                        fixed
+                        left-4
+                        top-20
+                        z-40
+
+                        flex
+                        flex-col
+                        gap-2.5
+
+                        rounded-2xl
+
+                        bg-black/50
+                        px-4
+                        py-3
+
+                        text-xs
+                        font-medium
+                        text-white
+
+                        shadow-xl
+                        backdrop-blur-md
+
+                        md:left-6
+                        md:top-24
+                        md:px-5
+                        md:py-4
+                        md:text-sm
+                        lg:left-20
+                    "
+                >
+                    <div className="flex items-center gap-2.5">
+                        <span
+                            className="
+                                h-2.5
+                                w-2.5
+                                shrink-0
+                                rounded-full
+                                bg-[var(--color-verde)]
+                                shadow-sm
+                            "
+                        />
+
+                        <span>
+                            Disponible
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                        <span
+                            className="
+                                h-2.5
+                                w-2.5
+                                shrink-0
+                                rounded-full
+                                bg-[var(--color-rojo)]
+                                shadow-sm
+                            "
+                        />
+
+                        <span>
+                            Vendido
+                        </span>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                        <span
+                            className="
+                                h-2.5
+                                w-2.5
+                                shrink-0
+                                rounded-full
+                                bg-[var(--color-yellow)]
+                                shadow-sm
+                            "
+                        />
+
+                        <span>
+                            Reservado
+                        </span>
+                    </div>
+                </div>
+                <AnimatePresence>
+                    {showSwipeHint && hasHorizontalScroll && (
+                        <motion.div
+                            initial={{
+                                opacity: 0,
+                                y: 20,
+                            }}
+                            animate={{
+                                opacity: 1,
+                                y: 0,
+                            }}
+                            exit={{
+                                opacity: 0,
+                                y: 20,
+                            }}
+                            transition={{
+                                duration: 0.35,
+                            }}
+                            className="
+                                pointer-events-none
+                                absolute
+                                bottom-24
+                                left-1/2
+                                z-50
+                                -translate-x-1/2
+                            "
+                        >
+                            <div
+                                className="
+                                    flex
+                                    items-center
+                                    gap-3
+                                    whitespace-nowrap
+                                    rounded-full
+                                    bg-[var(--color-naranja)]/70
+                                    px-5
+                                    py-3
+                                    text-sm
+                                    text-white
+                                    shadow-xl
+                                    backdrop-blur-md
+                                "
+                            >
+                                <motion.div
+                                    animate={{
+                                        x: [12, -12, 12],
+                                    }}
+                                    transition={{
+                                        duration: 1.2,
+                                        repeat: Infinity,
+                                        ease: "easeInOut",
+                                    }}
+                                    className="flex"
+                                >
+                                    <MdKeyboardArrowRight size={20} />
+                                    <MdKeyboardArrowRight size={20} />
+                                </motion.div>
+
+                                <span>
+                                    Desliza hacia la derecha
+                                </span>
+
+                                <motion.span
+                                    animate={{
+                                        x: [8, -8, 8],
+                                    }}
+                                    transition={{
+                                        duration: 1.2,
+                                        repeat: Infinity,
+                                        ease: "easeInOut",
+                                    }}
+                                    className="text-xl"
+                                >
+                                    <FaHandPointUp />
+                                </motion.span>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 <nav
                     className="
                         absolute
                         right-4
                         z-30
-                        mt-18
-                        lg:mt-25
+                        mt-20
+                        md:mt-24
+                        md:right-6
                         lg:right-20
                     "
                 >
@@ -344,16 +490,17 @@ function Recorrido() {
                             justify-center
                             gap-1
                             rounded-lg
-                            bg-white/90
+                            backdrop-blur-md
                             p-1.5
                             text-sm
                             lg:text-base
-                            font-medium
-                            text-slate-800
+                            font-normal
                             shadow-xl
                             transition
-                            hover:bg-[var(--color-naranja)]/90
-                            hover:text-white
+                            bg-[var(--color-naranja)]/90
+                            hover:bg-white/80
+                            hover:text-slate-800
+                            text-white
                             lg:px-2
                             lg:py-2
                         "
@@ -447,6 +594,7 @@ function Recorrido() {
                     <FloorPlan
                         project={project}
                         floor={selectedFloor}
+                        onHorizontalScrollChange={setHasHorizontalScroll}
                     />
                 </section>
             </div>

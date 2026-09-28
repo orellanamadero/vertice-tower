@@ -1,13 +1,49 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import UnidadMap from "./UnidadMap";
 
-function FloorPlan({ project, floor }) {
+function FloorPlan({ project, floor, onHorizontalScrollChange,}) {
     const floorImage = floor.imagePiso;
 
     const [imageSize, setImageSize] = useState({
         width: 0,
         height: 0,
     });
+    const scrollRef = useRef(null);
+
+    useEffect(() => {
+
+        const comprobarScroll = () => {
+
+            const container = scrollRef.current;
+
+            if (!container) return;
+
+            const tieneScrollHorizontal =
+                container.scrollWidth > container.clientWidth;
+
+            onHorizontalScrollChange?.(
+                tieneScrollHorizontal
+            );
+        };
+
+        comprobarScroll();
+
+        window.addEventListener(
+            "resize",
+            comprobarScroll
+        );
+
+        return () => {
+            window.removeEventListener(
+                "resize",
+                comprobarScroll
+            );
+        };
+
+    }, [
+        floor,
+        onHorizontalScrollChange,
+    ]);
 
     const handleImageLoad = (event) => {
         const {
@@ -22,6 +58,7 @@ function FloorPlan({ project, floor }) {
 
     return (
         <div
+            ref={scrollRef}
             className="
                 relative
                 h-full
