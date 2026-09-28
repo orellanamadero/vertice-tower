@@ -5,7 +5,7 @@ import HeroBackground from "./HeroBackground";
 import { GoArrowRight } from "react-icons/go";
 import {getProyectoRecorrido} from "../../../../services/api";
 
-function HeroProject({ project }) {
+function HeroProject({ project, empresa }) {
     const navigate = useNavigate();
 
     const [stage, setStage] = useState(0);
@@ -200,10 +200,10 @@ function HeroProject({ project }) {
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                        {stage === 0 && (
+                        {stage === 0 && empresa?.logoEmpresa && (
                             <img
-                                src={project.logoProyecto}
-                                alt={project.nombreProyecto || "Madero SRL"}
+                                src={empresa.logoEmpresa}
+                                alt={empresa?.nombreEmpresa || "Madero SRL"}
                                 className="
                                     absolute
                                     right-6
