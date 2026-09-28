@@ -100,7 +100,7 @@ function Recorrido360({ src, title }) {
                             animate-pulse
                             rounded-full
                             bg-white/70
-                            [animation-delay:150ms]
+                            [animation-delay:250ms]
                         "
                     />
                     <span
@@ -110,7 +110,7 @@ function Recorrido360({ src, title }) {
                             animate-pulse
                             rounded-full
                             bg-white/40
-                            [animation-delay:300ms]
+                            [animation-delay:400ms]
                         "
                     />
 

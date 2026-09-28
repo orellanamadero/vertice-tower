@@ -7,6 +7,7 @@ import { getProyectoBase } from "../services/api";
 
 function ProjectLayout() {
     const [project, setProject] = useState(null);
+    const [hideFooter, setHideFooter] = useState(false);
 
     useEffect(() => {
         const cargarProyecto = async () => {
@@ -28,9 +29,16 @@ function ProjectLayout() {
         <div className="relative flex min-h-screen flex-col">
             <NavbarProject project={project} />
             <main className="flex-1 min-h-0">
-                <Outlet context={{ project }} />
+                <Outlet
+                    context={{
+                        project,
+                        setHideFooter,
+                    }}
+                />
             </main>
-            <Footer project={project} />
+            {!hideFooter && (
+                <Footer project={project} />
+            )}
         </div>
     );
 }

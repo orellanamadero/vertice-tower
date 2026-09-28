@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useOutletContext, } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import { getProyectoRecorrido } from "../../../services/api";
 import UnidadInfo from "../components/Unidad/UnidadInfo";
@@ -8,7 +8,7 @@ import { HiMiniArrowLeftStartOnRectangle } from "react-icons/hi2";
 import { HiMiniArrowRightStartOnRectangle } from "react-icons/hi2";
 
 function DepartmentDetail() {
-
+    const { setHideFooter } = useOutletContext();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [view, setView] = useState("3d");
@@ -96,6 +96,12 @@ function DepartmentDetail() {
             return;
         }
     }, [unit]);
+    useEffect(() => {
+        setHideFooter?.(view === "tour");
+        return () => {
+            setHideFooter?.(false);
+        };
+    }, [view, setHideFooter]);
 
     if (loading) {
         return (

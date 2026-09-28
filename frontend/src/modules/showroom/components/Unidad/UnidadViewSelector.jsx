@@ -38,52 +38,100 @@ function UnidadViewSelector({
     );
 
     return (
-        <nav
-            className="
-                absolute
-                bottom-13
-                md:bottom-10
-                left-1/2
-                -translate-x-1/2
-                z-30
-                flex
-                items-center
-                justify-around
-                gap-1
-                rounded-full
-                bg-white/70
-                p-1
-                shadow-2xl
-                w-[320px]
-                md:w-[410px]
-                lg:w-auto
-        ">
-            {availableViews.map((item) => (
-                <button
-                    key={item.key}
-                    onClick={() => setView(item.key)}
-                    className={`
-                        rounded-full
-                        p-1
-                        text-[9px]
-                        font-medium
-                        transition
-                        md:text-[12px]
-                        lg:text-sm
-                        lg:px-4
-                        lg:py-2
-                        ${
-                            view === item.key
-                                ? "bg-[var(--color-naranja)]/90 text-white"
-                                : "text-slate-600 hover:bg-slate-100/80 hover:shadow-lg"
-                        }
-                    `}
-                >
-                    {item.label}
-                </button>
-            ))}
-        </nav>
-    );
+    <nav
+        className={`
+            absolute
+            left-1/2
+            -translate-x-1/2
+            z-40
+
+            flex
+            items-center
+            justify-around
+            gap-1
+
+            rounded-full
+            border
+            p-1
+            shadow-2xl
+            backdrop-blur-md
+
+            w-[330px]
+            md:w-[410px]
+            lg:w-auto
+
+            transition-all
+            duration-500
+            ease-out
+
+            ${
+                view === "tour"
+                    ? `
+                        bottom-22
+
+                        bg-black/55
+                        border-white/20
+                    `
+                    : `
+                        bottom-13
+                        md:bottom-10
+
+                        bg-white/70
+                        border-white/30
+                    `
+            }
+        `}
+    >
+        {availableViews.map((item) => (
+            <button
+                key={item.key}
+                type="button"
+                onClick={() => setView(item.key)}
+                className={`
+                    rounded-full
+
+                    px-2
+                    py-1.5
+
+                    text-[9px]
+                    font-medium
+
+                    transition-all
+                    duration-300
+
+                    md:px-3
+                    md:text-[12px]
+
+                    lg:px-4
+                    lg:py-2
+                    lg:text-sm
+
+                    ${
+                        view === item.key
+                            ? `
+                                bg-[var(--color-naranja)]
+                                text-white
+                                shadow-lg
+                            `
+                            : view === "tour"
+                                ? `
+                                    text-white/80
+                                    hover:bg-white/10
+                                    hover:text-white
+                                `
+                                : `
+                                    text-slate-600
+                                    hover:bg-slate-100/80
+                                    hover:shadow-lg
+                                `
+                    }
+                `}
+            >
+                {item.label}
+            </button>
+        ))}
+    </nav>
+);
 }
 
 export default UnidadViewSelector;
