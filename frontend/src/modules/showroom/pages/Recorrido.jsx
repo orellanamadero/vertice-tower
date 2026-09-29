@@ -32,30 +32,37 @@ function Recorrido() {
     const cachedProject = getProyectoRecorridoCache();
     const [project, setProject] = useState(cachedProject);
     const [loading, setLoading] = useState(!cachedProject);
-    const [showIntro, setShowIntro] = useState(() => {
-        return localStorage.getItem("vertice-recorrido-intro-visto") !== "true";
-    });
+    const volverAlPiso = location.state?.volverAlPiso === true;
+    const [showIntro, setShowIntro] = useState( !volverAlPiso );
     const [showSwipeHint, setShowSwipeHint] = useState(false);
     const [hasHorizontalScroll, setHasHorizontalScroll] = useState(false);
     const [selectedFloor, setSelectedFloor] = useState(() => obtenerPisoInicial(
         cachedProject,
         floorId)
     );
-    const handleAcceptIntro = () => {
+    const handleAcceptIntro = () => { setShowIntro(false);};
+    useEffect(() => {
+        const vieneDeUnidad =
+            location.state?.volverAlPiso === true;
+        setShowIntro(!vieneDeUnidad);
+        setShowSwipeHint(false);
+    }, [location.key]);
 
-        localStorage.setItem(
-            "vertice-recorrido-intro-visto",
-            "true"
-        );
-
-        setShowIntro(false);
-
+    useEffect(() => {
+        if (showIntro) return;
+        if (!hasHorizontalScroll) return;
         setShowSwipeHint(true);
-
-        setTimeout(() => {
+        const timer = setTimeout(() => {
             setShowSwipeHint(false);
         }, 3500);
-    };
+        return () => {
+            clearTimeout(timer);
+        };
+    }, [
+        location.key,
+        showIntro,
+        hasHorizontalScroll,
+    ]);
 
     const [showFloors, setShowFloors] = useState(true);
 
@@ -215,94 +222,127 @@ function Recorrido() {
             ">
                 {showIntro && (
                     <div
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="recorrido-welcome-title"
-                        aria-describedby="recorrido-welcome-description"
                         className="
-                            absolute
-                            left-1/2
-                            top-1/2
-                            z-50
-                            w-[90%]
-                            max-w-md
-                            -translate-x-1/2
-                            -translate-y-1/2
-                            rounded-2xl
-                            bg-[var(--color-naranja)]/70
-                            shadow-xl/30
-                            px-6
-                            py-6
-                            text-center
-                            text-white
-                            shadow-2xl
-                    ">
-                        { logo  && (
-                            <img
-                                src={logo}
-                                alt=""
-                                className="
-                                    mx-auto
-                                    block
-                                    h-15
-                                    w-auto
-                                    object-contain
-                                    md:h-15
-                                    brightness-0
-                                    invert
-                                    p-2
-                                "
-                            />
-                        )}
+                            fixed
+                            inset-0
+                            z-[1200]
 
-                        <h2 id="recorrido-welcome-title"
+                            flex
+                            items-center
+                            justify-center
+
+                            bg-black/60
+                            backdrop-blur-md
+                        "
+                    >
+                        <motion.div
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="recorrido-welcome-title"
+                            aria-describedby="recorrido-welcome-description"
+
+                            initial={{
+                                opacity: 0,
+                                scale: 0.95,
+                                y: 15,
+                            }}
+                            animate={{
+                                opacity: 1,
+                                scale: 1,
+                                y: 0,
+                            }}
+                            transition={{
+                                duration: 0.35,
+                                ease: "easeOut",
+                            }}
+
                             className="
-                                text-base
-                                md:text-lg
-                                font-semibold
-                        ">
-                            BIENVENIDO A TU FUTURO HOGAR
-                        </h2>
-                        <p id="recorrido-welcome-description"
-                            className="
-                                mt-2
-                                text-sm
+                                w-[90%]
+                                max-w-md
+
+                                rounded-2xl
+
+                                border
+                                border-white/20
+
+                                bg-[var(--color-naranja)]/75
+
+                                px-6
+                                py-6
+
+                                text-center
                                 text-white
-                        ">
-                            Desliza hacia la izquierda y toca un departamento disponible.
-                        </p>
-                        <div
-                            className="
-                                mt-4
-                                flex
-                                items-center
-                                justify-center
-                                gap-5
-                                text-xs
-                                text-white/90
-                                md:text-sm
-                        ">
-                        </div>
-                        <button
-                            type="button"
-                            onClick={handleAcceptIntro}
-                            className="
-                                mt-5
-                                rounded-lg
-                                bg-white
-                                px-7
-                                py-2.5
-                                text-sm
-                                font-medium
-                                text-black
-                                transition
-                                duration-200
-                                hover:bg-slate-900
-                                hover:text-white
-                                active:scale-95
-                        ">
-                            Aceptar
-                        </button>
+
+                                shadow-2xl
+                                backdrop-blur-xl
+                            "
+                        >
+
+                            {logo && (
+                                <img
+                                    src={logo}
+                                    alt=""
+                                    className="
+                                        mx-auto
+                                        block
+                                        h-15
+                                        w-auto
+                                        object-contain
+                                        brightness-0
+                                        invert
+                                        p-2
+                                    "
+                                />
+                            )}
+
+                            <h2
+                                id="recorrido-welcome-title"
+                                className="
+                                    text-base
+                                    font-semibold
+                                    md:text-lg
+                                "
+                            >
+                                BIENVENIDO A TU FUTURO HOGAR
+                            </h2>
+
+                            <p
+                                id="recorrido-welcome-description"
+                                className="
+                                    mt-2
+                                    text-sm
+                                    text-white/90
+                                "
+                            >
+                                Desliza hacia la derecha y toca un departamento disponible.
+                            </p>
+
+                            <button
+                                type="button"
+                                onClick={handleAcceptIntro}
+                                className="
+                                    mt-5
+                                    rounded-lg
+                                    bg-white
+                                    px-7
+                                    py-2.5
+                                    text-sm
+                                    font-medium
+                                    text-black
+                                    shadow-lg
+                                    transition
+                                    duration-200
+
+                                    hover:bg-slate-900
+                                    hover:text-white
+
+                                    active:scale-95
+                                "
+                            >
+                                Aceptar
+                            </button>
+
+                        </motion.div>
                     </div>
                 )}
                 <div

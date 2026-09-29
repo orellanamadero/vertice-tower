@@ -174,6 +174,7 @@ function DepartmentDetail() {
                         navigate("/recorrido", {
                             state: {
                                 floorId: floor.id,
+                                volverAlPiso: true,
                             },
                         })
                     }
