@@ -71,8 +71,7 @@ class TipoUnidadSerializer(serializers.ModelSerializer):
             "path",
             "x",
             "y",
-            "galeria",
-            "fichaTecnica"
+            "galeria"
         ]
 
 class UnidadSerializer(serializers.ModelSerializer):

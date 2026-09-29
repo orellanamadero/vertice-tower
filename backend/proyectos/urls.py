@@ -1,9 +1,7 @@
 from django.urls import path
 from .views import (
     ProyectoListView,
-    ProyectoNosotrosView,
     ProyectoHeroView,
-    ProyectoAvancesView,
     ProyectoUbicacionView,
     ProyectoContactoView,
     ProyectoRecorridoView,
@@ -15,7 +13,6 @@ from .views import (
     UsuarioListCreateView,
     UsuarioDetailView,
     UnidadPrecioUpdateView,
-    UnidadFichaTecnicaView,
     UnidadEdicionUpdateView,
     TipoVentaOpcionesView,
 )
@@ -25,9 +22,7 @@ urlpatterns = [
     path("", ProyectoListView.as_view()),
     path("<int:pk>/recorrido/", ProyectoRecorridoView.as_view()),
     path("<int:pk>/empresa/", ProyectoBaseView.as_view()),
-    path("<int:pk>/nosotros/", ProyectoNosotrosView.as_view()),
     path("<int:pk>/hero/", ProyectoHeroView.as_view()),
-    path("<int:pk>/avances/", ProyectoAvancesView.as_view()),
     path("<int:pk>/ubicacion/", ProyectoUbicacionView.as_view()),
     path("<int:pk>/contacto/", ProyectoContactoView.as_view()),
     path("unidades/", UnidadListView.as_view(), name="unidades"),
@@ -37,7 +32,6 @@ urlpatterns = [
     path("usuarios/",UsuarioListCreateView.as_view(),name="usuarios"),
     path("usuarios/<int:pk>/",UsuarioDetailView.as_view(),name="usuario-detail"),
     path("unidades/<int:pk>/precio/",UnidadPrecioUpdateView.as_view(),),
-    path("unidades/<int:pk>/ficha-tecnica/",UnidadFichaTecnicaView.as_view(),),
     path("unidades/<int:pk>/editar/", UnidadEdicionUpdateView.as_view(), name="unidad-editar"),
     path("unidades/tipos-venta/", TipoVentaOpcionesView.as_view(), name="unidad-tipos-venta",),
 ]

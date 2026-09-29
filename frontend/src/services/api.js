@@ -69,17 +69,6 @@ export async function getProyectoRecorrido(forzarActualizacion = false) {
     return recorridoPromise;
 }
 
-export async function descargarFichaTecnica(unidadId) {
-    const response = await fetch(
-        `${API_URL}/proyectos/unidades/${unidadId}/ficha-tecnica/`
-    );
-    if (!response.ok) {
-        throw new Error(
-            "No se pudo descargar la ficha técnica"
-        );
-    }
-    return response.blob();
-}
 export async function getProyectoBase() {
     const response = await fetch(
         `${API_URL}/proyectos/1/empresa/`
@@ -88,15 +77,6 @@ export async function getProyectoBase() {
         throw new Error(
             "No se pudo obtener el recorrido"
         );
-    }
-    return response.json();
-}
-export async function getNosotros() {
-    const response = await fetch(
-         `${API_URL}/proyectos/1/nosotros/`
-    );
-    if (!response.ok) {
-        throw new Error("Error al obtener Nosotros");
     }
     return response.json();
 }
@@ -109,16 +89,6 @@ export async function getProyectoHero() {
         throw new Error("Error al obtener el Hero");
     }
     return await response.json();
-}
-
-export async function getAvances() {
-    const response = await fetch(
-         `${API_URL}/proyectos/1/avances/`
-    );
-    if (!response.ok) {
-        throw new Error("Error al obtener los avances");
-    }
-    return response.json();
 }
 
 export async function getUbicacion() {

@@ -57,7 +57,7 @@ function Recorrido() {
         }, 3500);
     };
 
-    const [showFloors, setShowFloors] = useState(false);
+    const [showFloors, setShowFloors] = useState(true);
 
     useEffect(() => {
         let cancelled = false;

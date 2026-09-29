@@ -100,11 +100,6 @@ class TipoUnidad(models.Model):
         blank=True,
         null=True
     )
-    fichaTecnica = models.ImageField(
-        upload_to=tipo_unidad_ficha_path,
-        blank=True,
-        null=True
-    )
     path = models.TextField(
         blank=True,
         null=True

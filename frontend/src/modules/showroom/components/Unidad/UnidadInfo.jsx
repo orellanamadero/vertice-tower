@@ -10,7 +10,6 @@ import { MdOutlineChair } from "react-icons/md";
 import { PiWashingMachine } from "react-icons/pi";
 import { TbPicnicTable } from "react-icons/tb";
 import { useState } from "react";
-import { descargarFichaTecnica } from "../../../../services/api";
 
 function UnidadInfo({ project, unidad, floor }) {
     const [descargandoFicha, setDescargandoFicha] = useState(false);
@@ -23,29 +22,6 @@ function UnidadInfo({ project, unidad, floor }) {
     };
 
     const statusNombre = unidad.estadoNombre;
-
-    const handleDescargarFicha = async () => {
-        if (descargandoFicha) return;
-        try {
-            setDescargandoFicha(true);
-            const blob = await descargarFichaTecnica(unidad.id);
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download =`fichaTecnica-${tipoUnidad?.codigo}-Piso${floor.numero}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error(
-                "Error al descargar la ficha técnica:",
-                error
-            );
-        } finally {
-            setDescargandoFicha(false);
-        }
-    };
 
     const whatsappMessage = `Hola, estoy interesada en el departamento ${tipoUnidad?.codigo} del piso ${floor.numero}°. Me podría brindar más información.`;
     const whatsappUrl = `https://wa.me/${project.contacto?.numeroContacto}?text=${encodeURIComponent(
@@ -262,33 +238,6 @@ function UnidadInfo({ project, unidad, floor }) {
                         <FaWhatsapp className="size-5" />
                         Solicitar información
                     </a>
-                    <button
-                        type="button"
-                        onClick={handleDescargarFicha}
-                        disabled={descargandoFicha}
-                        className="
-                            flex
-                            gap-2
-                            m-1
-                            items-center
-                            justify-center
-                            rounded-full
-                            bg-[var(--color-naranja)]
-                            p-2
-                            text-sm
-                            text-white
-                            transition
-                            hover:bg-slate-900
-                            shadow-lg
-                            disabled:cursor-not-allowed
-                            disabled:opacity-60
-                    ">
-                        <VscFilePdf className="size-5" />
-                        {descargandoFicha
-                            ? "Generando ficha..."
-                            : "Ficha técnica"
-                        }
-                    </button>
                     <a
                         href={project.brochure}
                         download

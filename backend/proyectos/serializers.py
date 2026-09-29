@@ -9,8 +9,6 @@ from recorrido.serializers import (
 )
 from contenido.serializers import (
     HeroStageSerializer,
-    NosotrosSerializer,
-    EquipoSerializer,
     UbicacionSerializer,
     ContactoSerializer,
 )
@@ -87,24 +85,6 @@ class ProyectoBaseSerializer(serializers.ModelSerializer):
             "descripcion",
             "estado",
             "brochure",
-        ]
-
-class NosotrosPageSerializer(serializers.ModelSerializer):
-
-    nosotros = NosotrosSerializer(
-        read_only=True
-    )
-
-    equipo = EquipoSerializer(
-        many=True,
-        read_only=True
-    )
-
-    class Meta:
-        model = Proyecto
-        fields = [
-            "nosotros",
-            "equipo",
         ]
 
 class ProyectoHeroSerializer(serializers.ModelSerializer):
