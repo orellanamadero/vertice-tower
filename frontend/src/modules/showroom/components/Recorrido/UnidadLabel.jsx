@@ -24,9 +24,10 @@ function UnidadLabel({ unidad, width, height, onClick }) {
                 items-center
                 gap-2
                 rounded-full
-                bg-black/70
+                bg-black/55
                 py-2
-                px-5
+                px-2
+                md:px-5
                 font-normal
                 text-white
                 text-[10px]
