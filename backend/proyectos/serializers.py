@@ -61,6 +61,7 @@ class ProyectoSerializer(serializers.ModelSerializer):
             "descripcion",
             "estado",
             "brochure",
+            "brochureOficinas",
             "viewBox",
             
             "ubicacion",
@@ -85,6 +86,7 @@ class ProyectoBaseSerializer(serializers.ModelSerializer):
             "descripcion",
             "estado",
             "brochure",
+            "brochureOficinas",
         ]
 
 class ProyectoHeroSerializer(serializers.ModelSerializer):

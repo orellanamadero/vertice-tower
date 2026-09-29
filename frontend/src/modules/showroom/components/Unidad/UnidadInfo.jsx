@@ -23,7 +23,7 @@ function UnidadInfo({ project, unidad, floor }) {
 
     const statusNombre = unidad.estadoNombre;
 
-    const whatsappMessage = `Hola, estoy interesada en el departamento ${tipoUnidad?.codigo} del piso ${floor.numero}°. Me podría brindar más información.`;
+    const whatsappMessage = `Hola, estoy interesado en el departamento ${tipoUnidad?.codigo} del piso ${floor.numero}°. Me podría brindar más información.`;
     const whatsappUrl = `https://wa.me/${project.contacto?.numeroContacto}?text=${encodeURIComponent(
         whatsappMessage
     )}`;

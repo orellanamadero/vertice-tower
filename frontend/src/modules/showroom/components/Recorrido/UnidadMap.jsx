@@ -32,13 +32,35 @@ function UnidadMap({ floor, project, size }) {
         .map((unit) => unit.id);
     const pulseUnitsKey = pulseUnitIds.join("-");
     const handleUnitClick = (unit) => {
-        if (!unit || unit.estado !== 1) {
+        if (!unit) {
+            return;
+        }
+        const tipoUnidad = unit.tipoUnidad;
+        if (!tipoUnidad) {
+            return;
+        }
+        if (tipoUnidad.categoriaNombre === "OFICINA") {
+            if (!project?.brochureOficinas) {
+                console.warn(
+                    "El proyecto no tiene brochure de oficinas."
+                );
+                return;
+            }
+            window.open(
+                project.brochureOficinas,
+                "_blank",
+                "noopener,noreferrer"
+            );
+            return;
+        }
+        if (unit.estado !== 1) {
             return;
         }
         navigate(
-            `/recorrido/${floor.id}/${unit.tipoUnidad.codigo}`
+            `/recorrido/${floor.id}/${tipoUnidad.codigo}`
         );
     };
+
     useEffect(() => {
         if (pulseUnitIds.length === 0) {
             setPulseUnit(null);
@@ -143,8 +165,8 @@ function UnidadMap({ floor, project, size }) {
                             codigo: tipoUnidad.codigo,
                             nombre: tipoUnidad.nombre,
                             estado: unit.estado,
-                            esAreaComun:
-                                tipoUnidad.categoriaNombre === "AREA COMUN",
+                            esAreaComun: tipoUnidad.categoriaNombre === "AREA COMUN",
+                            esOficina: tipoUnidad.categoriaNombre === "OFICINA",
                         }}
                         width={width}
                         height={height}

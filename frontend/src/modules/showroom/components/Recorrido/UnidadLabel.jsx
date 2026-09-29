@@ -25,8 +25,8 @@ function UnidadLabel({ unidad, width, height, onClick }) {
                 gap-2
                 rounded-full
                 bg-black/70
-                px-3
-                py-1
+                py-3
+                px-6
                 font-normal
                 text-white
                 text-[10px]
@@ -57,27 +57,22 @@ function UnidadLabel({ unidad, width, height, onClick }) {
                     <span>
                         {unidad.nombre}
                     </span>
-                ) : (
-                    <>
-                        <span
-                            className={`
-                                h-2
-                                w-2
-                                rounded-full
-                                ${
-                                    unidad.estado === 1
-                                        ? "bg-green-500"
-                                        : unidad.estado === 2
-                                            ? "bg-red-500"
-                                            : "bg-yellow-500"
-                                }
-                            `}
-                        />
 
+                ) : unidad.esOficina ? (
+
+                    <span className="flex flex-col items-center gap-2">
                         <span>
-                            {unidad.piso} - {unidad.codigo}
+                            {unidad.nombre}
                         </span>
-                    </>
+                        <span className="text-[9px] tracking-wide text-white/70 md:text-xs">
+                            Ver brochure
+                        </span>
+                    </span>
+
+                ) : (
+                    <span>
+                        {unidad.piso} - {unidad.codigo}
+                    </span>
                 )}
             </span>
         </div>

@@ -68,6 +68,11 @@ class Proyecto(models.Model):
         blank=True,
         null=True
     )
+    brochureOficinas = models.FileField(
+        upload_to="proyecto/brochure/",
+        blank=True,
+        null=True
+    )
     viewBox = models.CharField(
         max_length=100,
     )
