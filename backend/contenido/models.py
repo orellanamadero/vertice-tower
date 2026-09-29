@@ -12,6 +12,10 @@ class HeroStage(models.Model):
     video = models.FileField(
         upload_to="proyecto/hero/videos/"
     )
+    videoURL = models.URLField(
+        blank=True,
+        null=True
+    )
     poster = models.ImageField(
         upload_to="proyecto/hero/posters/",
         blank=True,

@@ -15,6 +15,7 @@ class HeroStageAdmin(admin.ModelAdmin):
         "orden",
         "title",
         "video",
+        "videoURL",
         "poster",
     )
     list_filter = ("proyecto",)

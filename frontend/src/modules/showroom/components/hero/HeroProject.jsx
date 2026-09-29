@@ -86,12 +86,12 @@ function HeroProject({ project, empresa }) {
             "
         >
             <HeroBackground
-                desktopVideo={currentStage.video}
-                nextVideo={nextStage?.video}
+                desktopVideo={currentStage.videoURL}
+                nextVideo={nextStage?.videoURL}
                 currentPoster={currentStage.poster}
                 nextPoster={nextStage?.poster}
                 loop={stage === 0 || stage === 1}
-                muted={stage === 0}
+                muted={true}
                 onTimeUpdate={handleTimeUpdate}
             />
 

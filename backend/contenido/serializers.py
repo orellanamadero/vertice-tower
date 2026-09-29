@@ -13,6 +13,7 @@ class HeroStageSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "video",
+            "videoURL",
             "poster",
             "imagenHero",
             "title",
